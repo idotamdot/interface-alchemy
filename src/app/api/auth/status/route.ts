@@ -1,10 +1,11 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { createSession } from "@/lib/auth";
 import { getCurrentAppUser } from "@/lib/current-user";
 
 export const dynamic = "force-dynamic";
 
-function isAuthCookieName(name: string) {
+function isAuthCookieName(name: string): boolean {
   const normalized = name.toLowerCase();
   return (
     normalized.includes("neon-auth") ||
@@ -13,7 +14,7 @@ function isAuthCookieName(name: string) {
   );
 }
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   try {
     const cookieStore = await cookies();
     const authCookieNames = cookieStore
@@ -41,6 +42,11 @@ export async function GET() {
         }
       );
     }
+
+    // Neon Auth is the identity provider. Once its server-side session has
+    // been verified, mint UIGen's signed application session so Edge
+    // middleware can authorize protected project and filesystem endpoints.
+    await createSession(user.id, user.email);
 
     return NextResponse.json(
       {
