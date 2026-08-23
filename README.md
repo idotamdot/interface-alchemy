@@ -22,14 +22,18 @@ Copy `.env.example` to `.env` and configure:
 
 ```env
 DATABASE_URL=postgresql://user:password@host/database?sslmode=require
-JWT_SECRET=a-unique-random-secret-of-at-least-32-characters
+NEON_AUTH_BASE_URL=https://your-neon-auth-endpoint.example
+NEON_AUTH_COOKIE_SECRET=a-unique-random-secret-of-at-least-32-characters
+JWT_SECRET=a-different-unique-random-secret-of-at-least-32-characters
 ANTHROPIC_API_KEY=sk-ant-...
 ENABLE_DEV_MOCK_PROVIDER=false
 ```
 
 `DATABASE_URL` is used by Prisma for UIGen application data. Neon Auth maintains identity and provider-session records separately in Neon’s auth schema.
 
-`JWT_SECRET` signs UIGen’s own secure session cookie after Neon confirms the user. Use the same secret locally and in the matching Vercel environment only when you intentionally want those deployments to accept the same application sessions. Rotating it signs out sessions created with the prior value.
+`NEON_AUTH_BASE_URL` must point to the Neon Auth service for the same branch/database used by the deployment. `NEON_AUTH_COOKIE_SECRET` protects the Neon Auth server cookie layer and must remain server-only.
+
+`JWT_SECRET` signs UIGen’s own application session cookie after Neon confirms the user. It is intentionally separate from `NEON_AUTH_COOKIE_SECRET`. Use the same `JWT_SECRET` locally and in a matching Vercel environment only when you intentionally want those deployments to accept the same UIGen application sessions. Rotating it signs out sessions created with the prior value.
 
 `ANTHROPIC_API_KEY` is required for real generation. `ENABLE_DEV_MOCK_PROVIDER` defaults to `false`, may only be enabled in development or tests, and is rejected in production.
 
@@ -54,6 +58,8 @@ pnpm dev
 ```
 
 Open `http://localhost:3000`.
+
+Local magic-link authentication also requires `allow_localhost` to be enabled for the Interface Alchemy Neon Auth configuration. Production and preview callbacks must use an origin listed in Neon Auth's trusted origins.
 
 ## Production validation
 
