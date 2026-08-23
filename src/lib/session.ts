@@ -1,7 +1,9 @@
 import { z } from "zod";
 
+const sessionUserIdSchema = z.string().trim().min(1).max(128);
+
 export const sessionClaimsSchema = z.object({
-  userId: z.string().cuid(),
+  userId: sessionUserIdSchema,
   email: z.string().email(),
   iat: z.number().int().nonnegative(),
   exp: z.number().int().positive(),
