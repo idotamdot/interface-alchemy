@@ -1,11 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyRequestSession } from "@/lib/edge-session";
+import { neonAuth } from "@/lib/neon-auth-server";
 
-export async function middleware(request: NextRequest) {
+const NEON_AUTH_SESSION_VERIFIER_PARAM = "neon_auth_session_verifier";
+const handleNeonAuth = neonAuth.middleware({ loginUrl: "/auth/sign-in" });
+
+export async function middleware(request: NextRequest): Promise<NextResponse> {
+  // Neon Auth completes cross-origin auth handoffs by returning a verifier in
+  // the callback URL. Its middleware exchanges that verifier plus the browser's
+  // challenge cookie for the actual Neon session cookies on this app origin.
+  //
+  // Do this only for the handoff request so Interface Alchemy keeps its existing
+  // public-route behavior and its separate application JWT protection model.
+  if (request.nextUrl.searchParams.has(NEON_AUTH_SESSION_VERIFIER_PARAM)) {
+    return handleNeonAuth(request);
+  }
+
   const session = await verifyRequestSession(request);
 
-  // Protected routes that require authentication
+  // Protected routes that require the Interface Alchemy application session.
   const protectedPaths = ["/api/projects", "/api/filesystem"];
   const isProtectedPath = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
