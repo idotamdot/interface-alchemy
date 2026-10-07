@@ -9,7 +9,7 @@ type AuthRouteContext = Parameters<typeof authHandler.GET>[1];
 
 function normalizeChallengeCookie(cookie: string): string {
   const isChallengeCookie =
-    /(?:^|;\s*)(?:__Secure-)?(?:neon[_-]?auth[_-]?)?session_chall(?:e|a)nge=/i.test(cookie) ||
+    /(?:^|;\s*)(?:__Secure-)?(?:neon[_-]?auth[._-]?)?session_chall(?:e|a)nge=/i.test(cookie) ||
     /(?:^|;\s*)session_chall(?:e|a)nge=/i.test(cookie);
 
   if (!isChallengeCookie) {
