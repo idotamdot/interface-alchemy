@@ -82,11 +82,11 @@ export function HeaderActions({ user, projectId }: HeaderActionsProps) {
     return (
       <>
         <Button
-          className="h-9 border border-electric-orchid/70 bg-gradient-to-r from-plasma-violet via-electric-orchid to-signal-cyan px-4 text-hot-white shadow-[0_0_26px_rgba(217,70,239,0.35)] hover:brightness-110"
+          className="h-9 rounded-full border border-white/15 bg-[linear-gradient(110deg,rgba(124,58,237,.88),rgba(217,70,239,.78),rgba(103,232,249,.72))] px-4 text-hot-white shadow-[0_0_26px_rgba(139,92,246,0.22)] hover:brightness-110"
           onClick={() => setAuthDialogOpen(true)}
         >
           <Sparkles className="h-4 w-4" />
-          Enter UIGen
+          Enter studio
         </Button>
         <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
       </>
@@ -98,7 +98,7 @@ export function HeaderActions({ user, projectId }: HeaderActionsProps) {
       {!initialLoading && (
         <Popover open={projectsOpen} onOpenChange={setProjectsOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="h-8 gap-2" role="combobox">
+            <Button variant="outline" className="h-8 gap-2 rounded-full border-white/10 bg-white/[0.04] text-white/70 hover:bg-white/[0.08]" role="combobox">
               <FolderOpen className="h-4 w-4" />
               {currentProject ? currentProject.name : "Select Project"}
               <ChevronDown className="h-3 w-3 opacity-50" />
@@ -136,7 +136,7 @@ export function HeaderActions({ user, projectId }: HeaderActionsProps) {
         </Popover>
       )}
 
-      <Button className="flex h-8 items-center gap-2" onClick={handleNewDesign}>
+      <Button className="flex h-8 items-center gap-2 rounded-full border border-white/10 bg-white text-[#050507] hover:bg-white/90" onClick={handleNewDesign}>
         <Plus className="h-4 w-4" />
         New Design
       </Button>
@@ -144,7 +144,7 @@ export function HeaderActions({ user, projectId }: HeaderActionsProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8"
+        className="h-8 w-8 rounded-full text-white/45 hover:bg-white/[0.06] hover:text-white"
         onClick={handleSignOut}
         title="Sign out"
       >

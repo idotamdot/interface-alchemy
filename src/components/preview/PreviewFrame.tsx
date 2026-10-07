@@ -90,19 +90,26 @@ export function PreviewFrame() {
   if (error) {
     if (error === "firstLoad") {
       return (
-        <div className="flex h-full items-center justify-center bg-[#08080d] p-8 text-white">
-          <div className="max-w-md text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-violet-300/20 bg-[radial-gradient(circle_at_30%_20%,rgba(217,70,239,0.35),transparent_48%),radial-gradient(circle_at_75%_75%,rgba(34,211,238,0.25),transparent_45%),#0b0b12] shadow-[0_0_50px_rgba(139,92,246,0.18)]">
-              <Sparkles className="h-7 w-7 text-cyan-100" aria-hidden="true" />
+        <div className="relative flex h-full items-center justify-center overflow-hidden bg-[#060609] p-8 text-white">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(139,92,246,0.13),transparent_26%),radial-gradient(circle_at_64%_60%,rgba(103,232,249,0.08),transparent_25%)]" />
+          <div className="relative max-w-md text-center">
+            <div className="relative mx-auto mb-7 h-20 w-20">
+              <div className="absolute inset-[-18px] rounded-full border border-cyan-100/[0.05]" />
+              <div className="absolute inset-[-8px] rotate-12 rounded-[1.8rem] border border-fuchsia-100/[0.06]" />
+              <div className="living-edge absolute inset-0 rounded-[1.6rem] bg-white/[0.04] p-[1px]">
+                <div className="flex h-full w-full items-center justify-center rounded-[calc(1.6rem-1px)] bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.12),transparent_24%),radial-gradient(circle_at_32%_32%,rgba(217,70,239,0.28),transparent_48%),radial-gradient(circle_at_76%_76%,rgba(103,232,249,0.2),transparent_44%),#08080d]">
+                  <Sparkles className="h-7 w-7 text-white drop-shadow-[0_0_16px_rgba(103,232,249,0.4)]" aria-hidden="true" />
+                </div>
+              </div>
             </div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-fuchsia-200/60">
-              The Stage is listening
+            <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.3em] text-cyan-100/52">
+              Empty stage
             </p>
-            <h3 className="mt-3 text-xl font-semibold tracking-tight text-white">
-              Describe the feeling. Generate the interface.
+            <h3 className="mt-3 text-[1.65rem] font-semibold leading-tight tracking-[-0.045em] text-white">
+              Your visual language will appear here.
             </h3>
-            <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/45">
-              Shape the intent in The Conductor. Your first interface will resolve here as soon as the project has matter.
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/38">
+              Give the composition chamber a feeling and a purpose. Interface Alchemy will resolve the first live surface on this stage.
             </p>
           </div>
         </div>
@@ -112,18 +119,18 @@ export function PreviewFrame() {
     return (
       <div className="flex h-full items-center justify-center bg-[#08080d] p-8 text-white">
         <div className="max-w-md text-center">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-coral-300/20 bg-white/[0.04]">
-            <AlertCircle className="h-7 w-7 text-[#ff5f6d]" aria-hidden="true" />
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-red-300/20 bg-white/[0.04]">
+            <AlertCircle className="h-7 w-7 text-[#ff6978]" aria-hidden="true" />
           </div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#ff5f6d]/75">
+          <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.3em] text-[#ff6978]/75">
             Preview interrupted
           </p>
           <h3 className="mt-3 text-xl font-semibold tracking-tight text-white">
-            The interface could not resolve yet.
+            The potion could not resolve yet.
           </h3>
           <p className="mt-3 text-sm leading-6 text-white/50">{error}</p>
           <p className="mt-2 text-xs text-white/30">
-            Your files are safe. Refine the project matter or repair the entry point.
+            Your work is safe. Refine the visual direction or repair the entry point.
           </p>
         </div>
       </div>

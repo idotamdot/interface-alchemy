@@ -17,16 +17,16 @@ interface AuthDialogProps {
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="alchemy-glass overflow-hidden border-electric-orchid/45 bg-[#08080d]/95 p-0 text-hot-white shadow-[0_0_70px_rgba(139,92,246,0.28)] sm:max-w-[460px]">
-        <div className="h-px bg-gradient-to-r from-plasma-violet via-electric-orchid to-signal-cyan shadow-[0_0_18px_var(--electric-orchid)]" />
+      <DialogContent className="alchemy-glass overflow-hidden border-white/10 bg-[#060609]/96 p-0 text-hot-white shadow-[0_0_90px_rgba(139,92,246,0.22),0_40px_100px_rgba(0,0,0,0.5)] sm:max-w-[470px]">
+        <div className="h-px bg-[linear-gradient(90deg,transparent,#8b5cf6,#e879f9,#67e8f9,#ffd889,transparent)] shadow-[0_0_18px_rgba(103,232,249,.3)]" />
         <div className="p-6 sm:p-7">
           <DialogHeader className="text-left">
-            <p className="alchemy-kicker">Secure entry</p>
+            <p className="alchemy-kicker">Private studio entry</p>
             <DialogTitle className="mt-2 text-2xl font-semibold tracking-[-0.035em] text-hot-white">
-              Enter Interface Alchemy
+              Enter the alchemy studio
             </DialogTitle>
             <DialogDescription className="mt-2 leading-6 text-white/50">
-              One email. One secure link. No password to remember or recover.
+              One secure link opens your private design workspace. No password to remember.
             </DialogDescription>
           </DialogHeader>
 

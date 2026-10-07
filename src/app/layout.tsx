@@ -14,15 +14,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "UIGen — Interface Alchemy",
+    default: "Interface Alchemy",
     template: "%s · Interface Alchemy",
   },
   description:
-    "Describe the feeling. Generate the interface. UIGen turns creative intent into live, editable React experiences.",
-  applicationName: "UIGen Interface Alchemy",
+    "Turn atmosphere into interface. Interface Alchemy transforms creative intent into live, editable visual systems.",
+  applicationName: "Interface Alchemy",
   keywords: [
-    "AI UI generator",
-    "React generator",
+    "AI interface design",
+    "visual design system",
     "interface design",
     "website builder",
     "Interface Alchemy",
