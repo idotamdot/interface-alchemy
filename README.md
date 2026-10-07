@@ -21,7 +21,8 @@ Use that roadmap to track the Chromatic Void design system, living-edge signatur
 Copy `.env.example` to `.env` and configure:
 
 ```env
-DATABASE_URL=postgresql://user:password@host/database?sslmode=require
+DATABASE_URL=postgresql://user:password@pooler-host/database?sslmode=require
+DATABASE_URL_UNPOOLED=postgresql://user:password@direct-host/database?sslmode=require
 NEON_AUTH_BASE_URL=https://your-neon-auth-endpoint.example
 NEON_AUTH_COOKIE_SECRET=a-unique-random-secret-of-at-least-32-characters
 JWT_SECRET=a-different-unique-random-secret-of-at-least-32-characters
@@ -29,7 +30,7 @@ ANTHROPIC_API_KEY=sk-ant-...
 ENABLE_DEV_MOCK_PROVIDER=false
 ```
 
-`DATABASE_URL` is used by Prisma for UIGen application data. Neon Auth maintains identity and provider-session records separately in Neon’s auth schema.
+`DATABASE_URL` is the pooled runtime connection and `DATABASE_URL_UNPOOLED` is the direct connection. Those names match the variables already injected by the Neon integration in Vercel. Prisma uses the pooled URL for application queries and the unpooled URL for direct migration/administrative access. Neon Auth maintains identity and provider-session records separately in Neon’s auth schema.
 
 `NEON_AUTH_BASE_URL` must point to the Neon Auth service for the same branch/database used by the deployment. `NEON_AUTH_COOKIE_SECRET` protects the Neon Auth server cookie layer and must remain server-only.
 
