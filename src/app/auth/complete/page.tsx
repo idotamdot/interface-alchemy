@@ -48,8 +48,8 @@ async function waitForAuthenticatedAppUser() {
     if (response.status >= 500) {
       throw new Error(
         body?.error === "AUTH_STATUS_FAILED"
-          ? "UIGen could not validate the Neon session. Check the deployed Neon Auth environment configuration."
-          : "UIGen could not validate your secure session."
+          ? "Interface Alchemy could not validate the Neon session. Check the deployed Neon Auth environment configuration."
+          : "Interface Alchemy could not validate your secure session."
       );
     }
 
@@ -61,7 +61,7 @@ async function waitForAuthenticatedAppUser() {
   if (lastStatus === 401) {
     if (lastDiagnostic === "SESSION_COOKIE_MISSING") {
       throw new Error(
-        "The magic link returned to UIGen, but Neon did not set a session cookie. The callback exchange is failing before UIGen can sign you in."
+        "The magic link returned to Interface Alchemy, but Neon did not set a session cookie. The callback exchange is failing before Interface Alchemy can sign you in."
       );
     }
 
@@ -71,12 +71,12 @@ async function waitForAuthenticatedAppUser() {
           ? ` Detected cookie: ${lastCookieNames.join(", ")}.`
           : "";
       throw new Error(
-        `Neon set an authentication cookie, but UIGen could not validate the session.${cookieDetail}`
+        `Neon set an authentication cookie, but Interface Alchemy could not validate the session.${cookieDetail}`
       );
     }
   }
 
-  throw new Error("UIGen could not complete secure entry.");
+  throw new Error("Interface Alchemy could not complete secure entry.");
 }
 
 export default function AuthCompletePage() {
@@ -88,6 +88,15 @@ export default function AuthCompletePage() {
 
     const completeEntry = async () => {
       try {
+        const authError = new URLSearchParams(window.location.search).get("error");
+        if (authError) {
+          throw new Error(
+            authError === "INVALID_TOKEN"
+              ? "This secure link has expired or was already used. Request a new magic link."
+              : "The secure link could not be verified. Request a new magic link and try again."
+          );
+        }
+
         await waitForAuthenticatedAppUser();
 
         const anonWork = getAnonWorkData();
@@ -124,7 +133,7 @@ export default function AuthCompletePage() {
           setError(
             cause instanceof Error
               ? cause.message
-              : "UIGen could not complete secure entry."
+              : "Interface Alchemy could not complete secure entry."
           );
         }
       }
@@ -146,12 +155,12 @@ export default function AuthCompletePage() {
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-signal-cyan/70 bg-signal-cyan/10 shadow-[0_0_32px_rgba(34,211,238,0.45)]">
           <Sparkles className="h-7 w-7 animate-pulse text-signal-cyan drop-shadow-[0_0_12px_var(--signal-cyan)]" />
         </div>
-        <p className="alchemy-kicker mt-6">Identity online</p>
+        <p className="alchemy-kicker mt-6">Studio unlocked</p>
         <h1 className="mt-3 text-2xl font-semibold tracking-[-0.04em]">
-          Opening your workspace
+          Opening your private studio
         </h1>
         <p className="mt-3 text-sm leading-6 text-white/50">
-          UIGen is resolving your projects and restoring any interface matter
+          Interface Alchemy is restoring your projects and any visual work
           created before sign-in.
         </p>
 

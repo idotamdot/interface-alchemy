@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { createSession } from "@/lib/auth";
 import { getCurrentAppUser } from "@/lib/current-user";
 
 export const dynamic = "force-dynamic";
@@ -43,11 +42,9 @@ export async function GET(): Promise<NextResponse> {
       );
     }
 
-    // Neon Auth is the identity provider. Once its server-side session has
-    // been verified, mint UIGen's signed application session so Edge
-    // middleware can authorize protected project and filesystem endpoints.
-    await createSession(user.id, user.email);
-
+    // Neon Auth is the only session authority. Server actions and project
+    // loaders verify this same managed session directly, so minting a second
+    // application JWT here would only create another failure boundary.
     return NextResponse.json(
       {
         authenticated: true,

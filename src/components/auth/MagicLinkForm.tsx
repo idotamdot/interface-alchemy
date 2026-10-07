@@ -19,14 +19,12 @@ export function MagicLinkForm() {
     setStatus("sending");
 
     try {
-      // Neon validates callback URLs against the trusted application origin.
-      // Send an explicit absolute URL so production links return to UIGen
-      // rather than relying on relative callback resolution.
-      const callbackURL = new URL("/auth/complete", window.location.origin).toString();
-
+      // Managed Better Auth resolves this relative callback through the app's
+      // own auth proxy. Keeping it relative avoids baking a deployment hostname
+      // into the magic link and matches Neon's documented Next.js flow.
       const result = await neonAuthClient.signIn.magicLink({
         email: email.trim().toLowerCase(),
-        callbackURL,
+        callbackURL: "/auth/complete",
       });
 
       if (result.error) {
@@ -57,7 +55,7 @@ export function MagicLinkForm() {
           <p className="alchemy-kicker text-acid-lime">Access signal sent</p>
           <h3 className="mt-2 text-xl font-semibold text-hot-white">Check your email</h3>
           <p className="mt-2 text-sm leading-6 text-white/55">
-            Open the secure link sent to <span className="text-hot-white">{email}</span>. It will return you to UIGen already signed in.
+            Open the secure link sent to <span className="text-hot-white">{email}</span>. It will return you to Interface Alchemy already signed in.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -87,7 +85,7 @@ export function MagicLinkForm() {
         <div className="flex items-start gap-3">
           <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-electric-orchid drop-shadow-[0_0_10px_var(--electric-orchid)]" />
           <p className="text-sm leading-6 text-white/65">
-            No password. UIGen sends one secure access link and creates your workspace the first time you enter.
+            No password. Interface Alchemy sends one secure access link and creates your workspace the first time you enter.
           </p>
         </div>
       </div>
