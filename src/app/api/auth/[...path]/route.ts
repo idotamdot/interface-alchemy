@@ -5,6 +5,8 @@ export const dynamic = "force-dynamic";
 
 const authHandler = neonAuth.handler();
 
+type AuthRouteContext = Parameters<typeof authHandler.GET>[1];
+
 function normalizeChallengeCookie(cookie: string): string {
   const isChallengeCookie =
     /(?:^|;\s*)(?:__Secure-)?(?:neon[_-]?auth[_-]?)?session_chall(?:e|a)nge=/i.test(cookie) ||
@@ -51,10 +53,16 @@ function normalizeAuthResponse(response: Response): Response {
   });
 }
 
-export async function GET(request: NextRequest): Promise<Response> {
-  return normalizeAuthResponse(await authHandler.GET(request));
+export async function GET(
+  request: NextRequest,
+  context: AuthRouteContext
+): Promise<Response> {
+  return normalizeAuthResponse(await authHandler.GET(request, context));
 }
 
-export async function POST(request: NextRequest): Promise<Response> {
-  return normalizeAuthResponse(await authHandler.POST(request));
+export async function POST(
+  request: NextRequest,
+  context: AuthRouteContext
+): Promise<Response> {
+  return normalizeAuthResponse(await authHandler.POST(request, context));
 }
