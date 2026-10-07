@@ -13,7 +13,7 @@ Use that roadmap to track the Chromatic Void design system, living-edge signatur
 - Node.js 18+
 - pnpm
 - Neon Postgres database
-- Neon Auth configured for the deployed UIGen domain
+- Neon Auth configured for the deployed Interface Alchemy domain
 - Anthropic API key
 
 ## Environment setup
@@ -25,7 +25,6 @@ DATABASE_URL=postgresql://user:password@pooler-host/database?sslmode=require
 DATABASE_URL_UNPOOLED=postgresql://user:password@direct-host/database?sslmode=require
 NEON_AUTH_BASE_URL=https://your-neon-auth-endpoint.example
 NEON_AUTH_COOKIE_SECRET=a-unique-random-secret-of-at-least-32-characters
-JWT_SECRET=a-different-unique-random-secret-of-at-least-32-characters
 ANTHROPIC_API_KEY=sk-ant-...
 ENABLE_DEV_MOCK_PROVIDER=false
 ```
@@ -33,8 +32,6 @@ ENABLE_DEV_MOCK_PROVIDER=false
 `DATABASE_URL` is the pooled runtime connection and `DATABASE_URL_UNPOOLED` is the direct connection. Those names match the variables already injected by the Neon integration in Vercel. Prisma uses the pooled URL for application queries and the unpooled URL for direct migration/administrative access. Neon Auth maintains identity and provider-session records separately in Neon’s auth schema.
 
 `NEON_AUTH_BASE_URL` must point to the Neon Auth service for the same branch/database used by the deployment. `NEON_AUTH_COOKIE_SECRET` protects the Neon Auth server cookie layer and must remain server-only.
-
-`JWT_SECRET` signs UIGen’s own application session cookie after Neon confirms the user. It is intentionally separate from `NEON_AUTH_COOKIE_SECRET`. Use the same `JWT_SECRET` locally and in a matching Vercel environment only when you intentionally want those deployments to accept the same UIGen application sessions. Rotating it signs out sessions created with the prior value.
 
 `ANTHROPIC_API_KEY` is required for real generation. `ENABLE_DEV_MOCK_PROVIDER` defaults to `false`, may only be enabled in development or tests, and is rejected in production.
 
@@ -77,11 +74,11 @@ Plain `pnpm test` starts Vitest watch mode. Use `pnpm test --run` for a one-time
 
 1. A visitor can begin work anonymously.
 2. The visitor requests a Neon magic link.
-3. Neon returns the browser to `/auth/complete` on the UIGen domain.
-4. UIGen waits for the Neon provider session, resolves the application user by stable email identity, creates its signed application session, and restores the pending workspace.
+3. Managed Better Auth verifies the one-time link and returns the browser to `/auth/complete` on the Interface Alchemy origin.
+4. The Neon SDK completes the app-origin session handoff; Interface Alchemy reads that Managed Better Auth session directly, resolves the application user by stable email identity, and restores the pending workspace.
 5. Registered users retain persistent projects in Neon Postgres.
 
-The production domain and callback URL configured in Neon and Vercel must agree. Cookie-secret changes require a new deployment before production functions and middleware use the new value.
+The production origin must be allowed by Neon Auth. The callback is kept relative (`/auth/complete`) so it stays on the current trusted app origin. Cookie-secret changes require a new deployment before production functions and middleware use the new value.
 
 ## Usage
 
