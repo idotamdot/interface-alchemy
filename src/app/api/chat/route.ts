@@ -3,7 +3,7 @@ import { streamText, appendResponseMessages, convertToCoreMessages } from "ai";
 import { buildStrReplaceTool } from "@/lib/tools/str-replace";
 import { buildFileManagerTool } from "@/lib/tools/file-manager";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { getCurrentAppUser } from "@/lib/current-user";
 import { getLanguageModel } from "@/lib/provider";
 import { generationPrompt } from "@/lib/prompts/generation";
 import { rateLimit } from "@/lib/rate-limit";
@@ -127,9 +127,9 @@ export async function POST(req: Request) {
       // Save to project if projectId is provided and user is authenticated
       if (projectId) {
         try {
-          // Check if user is authenticated
-          const session = await getSession();
-          if (!session) {
+          // Neon Managed Better Auth is the single session authority.
+          const user = await getCurrentAppUser();
+          if (!user) {
             console.error("User not authenticated, cannot save project");
             return;
           }
@@ -145,7 +145,7 @@ export async function POST(req: Request) {
           await prisma.project.update({
             where: {
               id: projectId,
-              userId: session.userId,
+              userId: user.id,
             },
             data: {
               messages: JSON.stringify(allMessages),
