@@ -91,7 +91,11 @@ export default function AuthCompletePage() {
         const authError = new URLSearchParams(window.location.search).get("error");
         if (authError) {
           throw new Error(
-            authError === "INVALID_TOKEN"
+            authError === "SESSION_CHALLENGE_MISSING"
+              ? "Open the link in the same browser and browser profile where you requested it. This browser has no matching sign-in challenge. Return to the studio and request a link here."
+              : authError === "SESSION_EXCHANGE_FAILED"
+              ? "Neon accepted the return link, but the studio could not exchange it for a session. Return to the studio and request a new link in this browser."
+              : authError === "INVALID_TOKEN"
               ? "This secure link has expired or was already used. Request a new magic link."
               : "The secure link could not be verified. Request a new magic link and try again."
           );
@@ -165,11 +169,13 @@ export default function AuthCompletePage() {
         </p>
 
         {error && (
-          <div className="mt-6 rounded-xl border border-solar-coral/60 bg-solar-coral/10 px-4 py-3 text-sm text-solar-coral">
+          <div role="alert" className="mt-6 rounded-xl border border-solar-coral/60 bg-solar-coral/10 px-4 py-3 text-sm text-solar-coral">
             {error}
+            <a href="/" className="mt-4 block underline">Return to studio sign-in</a>
           </div>
         )}
       </section>
     </main>
   );
 }
+

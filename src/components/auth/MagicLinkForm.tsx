@@ -55,7 +55,7 @@ export function MagicLinkForm() {
           <p className="alchemy-kicker text-acid-lime">Studio key sent</p>
           <h3 className="mt-2 text-xl font-semibold text-hot-white">Check your email</h3>
           <p className="mt-2 text-sm leading-6 text-white/55">
-            Open the secure link sent to <span className="text-hot-white">{email}</span>. It will return you to Interface Alchemy already signed in.
+            Open the secure link sent to <span className="text-hot-white">{email}</span> in this same browser and browser profile to complete sign-in. If your email app opens another browser, use its option to open the link in this browser.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -122,3 +122,4 @@ export function MagicLinkForm() {
     </form>
   );
 }
+
