@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { ChatInterface } from "../ChatInterface";
 import { useChat } from "@/lib/contexts/chat-context";
 import type { Message } from "ai";
@@ -143,27 +143,32 @@ test("uses the Chromatic Void container and preserves scroll behavior", () => {
 });
 
 
-test("the Seer preserves the brief, rerolls without stacking directions, and waits for submission", () => {
-  vi.spyOn(Math, "random").mockReturnValue(0);
+test("the Seer reviews options before changing a draft and preserves the brief when choosing", async () => {
+  const direction = { name: "Sunlit", direction: "Warm editorial", rationale: "Readable and welcoming", palette: { background: "#ffffff", text: "#000000", mutedText: "#333333", accent: "#ffff00", accentText: "#000000", border: "#000000" } };
+  const result = { proposal: direction, critique: "Keep readable text", final: direction };
+  const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ results: [result] }) });
+  vi.stubGlobal("fetch", fetchMock);
   const setInput = vi.fn();
-  const state = { ...baseChatState, input: "A multilingual neighborhood shop", setInput };
-  mockedUseChat.mockReturnValue(state);
-  const view = render(<ChatInterface />);
+  mockedUseChat.mockReturnValue({ ...baseChatState, input: "A multilingual shop", setInput });
+  render(<ChatInterface />);
   fireEvent.click(screen.getByRole("button", { name: "Let the Seer choose" }));
-  const first = setInput.mock.calls[0][0];
-  expect(first).toContain(state.input);
-  expect(first).toContain("Sunlit editorial");
+  await waitFor(() => expect(screen.getByRole("button", { name: "Use Sunlit" })).toBeDefined());
+  expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ brief: "A multilingual shop", count: 3 });
+  expect(setInput).not.toHaveBeenCalled();
   expect(baseChatState.append).not.toHaveBeenCalled();
-  expect(baseChatState.handleSubmit).not.toHaveBeenCalled();
-  mockedUseChat.mockReturnValue({ ...state, input: first });
-  view.rerender(<ChatInterface />);
+  fireEvent.click(screen.getByRole("button", { name: "Use Sunlit" }));
+  expect(setInput.mock.calls[0][0]).toContain("A multilingual shop");
+  expect(setInput.mock.calls[0][0]).toContain("4.5:1");
+  vi.unstubAllGlobals();
+});
+
+test("a failed Seer review keeps the draft and offers recovery", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, json: async () => ({ error: "Your draft is intact. Try again." }) }));
+  const setInput = vi.fn();
+  mockedUseChat.mockReturnValue({ ...baseChatState, input: "My draft", setInput });
+  render(<ChatInterface />);
   fireEvent.click(screen.getByRole("button", { name: "Let the Seer choose" }));
-  const second = setInput.mock.calls[1][0];
-  expect(second).toContain(state.input);
-  expect(second).toContain("Playful garden");
-  expect(second).not.toContain("Sunlit editorial");
-  mockedUseChat.mockReturnValue({ ...state, status: "streaming" });
-  view.rerender(<ChatInterface />);
-  expect(screen.getByRole("button", { name: "Let the Seer choose" }).hasAttribute("disabled")).toBe(true);
-  vi.restoreAllMocks();
+  await waitFor(() => expect(screen.getByRole("alert").textContent).toContain("Try again"));
+  expect(setInput).not.toHaveBeenCalled();
+  vi.unstubAllGlobals();
 });

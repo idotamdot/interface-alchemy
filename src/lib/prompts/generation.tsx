@@ -63,7 +63,7 @@ ACCESSIBILITY IS A DESIGN MATERIAL, NOT A CLEANUP STEP
 - Associate labels and inputs.
 - Maintain visible keyboard focus.
 - Never rely on color alone for meaning.
-- Preserve strong contrast without destroying the art direction.
+- Always meet WCAG AA contrast: all body and secondary text at least 4.5:1, large text at least 3:1, controls and focus indicators at least 3:1 against adjacent colors. Respect any supplied measured palette pairs. Do not place text on gradients or transparent backgrounds unless all rendered backgrounds meet the required contrast. Never trade legibility for atmosphere.
 - Informative images need concise meaningful alt text.
 - Decorative images should use empty alt text or be hidden from assistive technology.
 - Complex visuals need a nearby textual or structured equivalent when their information matters.
@@ -91,3 +91,4 @@ Silently inspect the result and fix it if any answer is "no":
 
 When editing an existing project, preserve what is already working unless the user's new direction calls for a deliberate change. Improve the weakest parts first instead of restyling everything indiscriminately.
 `;
+

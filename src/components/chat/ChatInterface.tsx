@@ -5,6 +5,8 @@ import { Activity, Orbit, Sparkles, Shuffle } from "lucide-react";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { z } from "zod";
+import { checkPalette, directionPrompt, seerResultSchema, type SeerResult } from "@/lib/seer-contract";
 import { useChat } from "@/lib/contexts/chat-context";
 
 export function ChatInterface() {
@@ -12,23 +14,38 @@ export function ChatInterface() {
   const { messages, input, setInput, handleInputChange, handleSubmit, status, append } =
     useChat();
 
-  const [seerDirection, setSeerDirection] = useState("");
-  const seerDraft = useRef({ base: "", output: "", index: -1 });
-  const randomizeDirection = () => {
-    const directions = [
-      "Sunlit editorial: golden yellow, burnt brown, bold typography, pink highlights and gentle reveal motion.",
-      "Playful garden: lime accents, warm cream, rounded cards, coral details and springy button feedback.",
-      "Quiet moonlight: deep indigo, silver surfaces, generous space and slow, subtle transitions.",
-      "Tactile atelier: terracotta, soft pink, paper-like surfaces, expressive headings and restrained motion.",
-      "Electric sunset: orange and magenta gradients, dark cocoa, luminous lime actions and flowing borders.",
-      "Coastal clarity: teal, sandy neutrals, crisp hierarchy, spacious cards and calm fade transitions.",
-    ];
-    const candidates = directions.map((_, index) => index).filter(index => index !== seerDraft.current.index);
-    const index = candidates[Math.floor(Math.random() * candidates.length)];
+  const [seerResults, setSeerResults] = useState<SeerResult[]>([]);
+  const [seerLoading, setSeerLoading] = useState(false);
+  const [seerError, setSeerError] = useState("");
+  const [seerCount, setSeerCount] = useState(3);
+  const [seerSource, setSeerSource] = useState("description");
+  const [selectedDirection, setSelectedDirection] = useState("");
+  const seerDraft = useRef({ base: "", output: "" });
+  const seerRequest = useRef<AbortController | null>(null);
+  useEffect(() => () => seerRequest.current?.abort(), []);
+  const askSeer = async () => {
+    if (seerLoading) return;
+    const controller = new AbortController();
+    seerRequest.current = controller;
+    setSeerLoading(true);
+    setSeerError("");
+    try {
+      const base = input === seerDraft.current.output ? seerDraft.current.base : input;
+      const response = await fetch("/api/seer", { method: "POST", signal: controller.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ brief: seerSource === "pick" ? "" : base, count: seerCount }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(typeof data.error === "string" ? data.error : "The Seer could not finish. Your draft is intact.");
+      const parsed = z.object({ results: z.array(seerResultSchema).min(1).max(3) }).parse(data);
+      setSeerResults(parsed.results);
+      setSelectedDirection("");
+    } catch (error) {
+      if (!controller.signal.aborted) setSeerError(error instanceof Error ? error.message : "The Seer could not finish. Your draft is intact.");
+    } finally { if (!controller.signal.aborted) setSeerLoading(false); }
+  };
+  const chooseDirection = (result: SeerResult) => {
     const base = input === seerDraft.current.output ? seerDraft.current.base : input;
-    const output = `${base ? base + "\n\n" : "Design an interface.\n\n"}Visual direction: ${directions[index]} Preserve the product requirements, readable text, keyboard access and reduced-motion support.`;
-    seerDraft.current = { base, output, index };
-    setSeerDirection(directions[index]);
+    const output = `${base ? base + "\n\n" : "Design an interface.\n\n"}${directionPrompt(result)}`;
+    seerDraft.current = { base, output };
+    setSelectedDirection(result.final.name);
     setInput(output);
   };
 
@@ -99,11 +116,38 @@ export function ChatInterface() {
       </ScrollArea>
 
       <div className="flex-shrink-0">
-        <div className="border-t border-white/10 px-4 py-3">
-          <button type="button" onClick={randomizeDirection} disabled={isSynthesizing} className="flex min-h-11 items-center gap-2 rounded-full border border-lime-200/40 bg-lime-200/10 px-4 text-base text-lime-100 transition hover:bg-lime-200/20 disabled:opacity-50">
-            <Shuffle className="h-4 w-4" aria-hidden="true" /> Let the Seer choose
-          </button>
-          <p aria-live="polite" className="mt-2 text-sm leading-6 text-white/80">{seerDirection ? `The Seer suggests: ${seerDirection} Edit the prompt or choose again before synthesizing.` : "Discover a visual direction. Your draft stays yours to review."}</p>
+        <div className="max-h-[35dvh] overflow-y-auto border-t border-white/10 px-4 py-3" aria-busy={seerLoading}>
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="text-sm text-white/90">Inspiration
+              <select aria-label="Seer inspiration" value={seerSource} onChange={event => setSeerSource(event.target.value)} disabled={seerLoading || isSynthesizing} className="ml-2 min-h-11 rounded-lg bg-[#241109] px-2 text-white">
+                <option value="description">My description</option><option value="pick">Seer pick</option>
+              </select>
+            </label>
+            <label className="text-sm text-white/90">Options
+              <select aria-label="Number of directions" value={seerCount} onChange={event => setSeerCount(Number(event.target.value))} disabled={seerLoading || isSynthesizing} className="ml-2 min-h-11 rounded-lg bg-[#241109] px-2 text-white">
+                {[1, 2, 3].map(count => <option key={count} value={count}>{count}</option>)}
+              </select>
+            </label>
+            <button type="button" onClick={askSeer} disabled={seerLoading || isSynthesizing} className="flex min-h-11 items-center gap-2 rounded-full border border-lime-200/40 bg-lime-200/10 px-4 text-base text-lime-100 transition hover:bg-lime-200/20 disabled:opacity-50">
+              <Shuffle className="h-4 w-4" aria-hidden="true" /> {seerLoading ? "The Seer is considering…" : "Let the Seer choose"}
+            </button>
+          </div>
+          <p role="status" className="mt-2 text-sm leading-6 text-white/90">{seerLoading ? "Proposing ideas, gathering a second opinion, and checking final palette contrast. Your draft stays intact." : selectedDirection ? `${selectedDirection} added to your draft. Review before synthesizing.` : "Two AIs propose, critique, and decide. Choose a direction to add to your draft."}</p>
+          {seerError && <p role="alert" className="mt-2 text-base text-pink-100">{seerError}</p>}
+          <div className="space-y-3">
+            {seerResults.map((result, index) => <article key={index} className="mt-3 rounded-xl border border-white/25 p-3">
+              <h3 className="text-lg font-semibold text-white">{index + 1}. {result.final.name}</h3>
+              <p className="mt-2 text-base leading-6 text-white/90">{result.final.direction}</p>
+              <div className="mt-3 rounded-lg border-2 p-3" style={{ backgroundColor: result.final.palette.background, color: result.final.palette.text, borderColor: result.final.palette.border }}>
+                <p className="font-semibold">Your interface, clearly seen</p>
+                <p style={{ color: result.final.palette.mutedText }}>Readable supporting text</p>
+                <span className="mt-2 inline-block rounded-lg border-2 px-3 py-2" style={{ backgroundColor: result.final.palette.accent, color: result.final.palette.accentText, borderColor: result.final.palette.border }}>Example action</span>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-white/90">{checkPalette(result.final.palette).map(check => `${check.pair}: ${check.ratio.toFixed(2)}:1`).join(" · ")}</p>
+              <details className="mt-2 text-base leading-6 text-white/90"><summary className="min-h-11 cursor-pointer py-2">Idea, opinion & final choice</summary><p>OpenAI’s idea: {result.proposal.name}. {result.proposal.rationale}</p><p className="mt-2">Gemini’s opinion: {result.critique}</p><p className="mt-2">OpenAI’s final choice: {result.final.rationale}</p><p className="mt-2">These checks cover the solid palette pairs. The generated screen still needs a rendered accessibility review.</p></details>
+              <button type="button" onClick={() => chooseDirection(result)} disabled={seerLoading || isSynthesizing} aria-pressed={selectedDirection === result.final.name} className="mt-2 min-h-11 rounded-full border border-lime-200/40 bg-lime-200/10 px-4 text-base text-lime-100 disabled:opacity-50">Use {result.final.name}</button>
+            </article>)}
+          </div>
         </div>
         <MessageInput
           input={input}
