@@ -249,7 +249,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
           </div>
           <section className="mt-5 rounded-2xl border border-white/20 bg-white/5 p-5" aria-label="Website Builder handoff">
             <h3 className="text-xl font-semibold">Prepare for Website Builder</h3>
-            <p className="mt-2 text-sm leading-6 text-[#d4cfe6]">Export the selected visual direction separately from UX Designer Studio's accepted wireframes. This is a style proposal, not an implemented website.</p>
+            <p className="mt-2 text-sm leading-6 text-[#d4cfe6]">Export the selected visual direction separately from UX Designer Studio&apos;s accepted wireframes. This is a style proposal, not an implemented website.</p>
             <button type="button" disabled={!seerResults.some(item=>item.final.name===selectedDirection)} onClick={exportVisualStyle} className="seer-atelier-select-button mt-4 min-h-12 rounded-full px-6 font-semibold disabled:opacity-50">Download visual style package</button>
             <p role="status" className="mt-3 text-sm">{handoffStatus}</p>
           </section>
