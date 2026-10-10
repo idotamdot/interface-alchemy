@@ -72,13 +72,14 @@ export function MainContent({ user, project }: MainContentProps) {
   const [activeView, setActiveView] = useState<WorkspaceView>("preview");
   const [stageMode, setStageMode] = useState<StageMode>("live");
   const [viewport, setViewport] = useState<Viewport>("desktop");
+  const [mobilePanel, setMobilePanel] = useState<"compose" | "stage">("compose");
   const projectName = project?.name ?? "Untitled potion";
   const viewportWidth = viewport === "desktop" ? "100%" : "390px";
 
   return (
     <FileSystemProvider initialData={project?.data}>
       <ChatProvider projectId={project?.id} initialMessages={project?.messages}>
-        <main className="alchemy-atmosphere relative h-screen w-screen overflow-hidden text-[#fbfbff]">
+        <main className="alchemy-atmosphere relative h-dvh w-full overflow-hidden text-[#fbfbff]">
           <div className="alchemy-grid pointer-events-none absolute inset-0 opacity-70" />
           <div className="alchemy-stardust pointer-events-none absolute inset-0" />
           <div className="alchemy-veil pointer-events-none absolute inset-0" />
@@ -87,7 +88,7 @@ export function MainContent({ user, project }: MainContentProps) {
           <div className="alchemy-orb absolute bottom-[-13rem] left-[40%] h-[28rem] w-[28rem] bg-fuchsia-500/[0.18] [animation-delay:3s]" />
 
           <div className="relative z-10 flex h-full flex-col p-2.5 sm:p-4">
-            <header className="alchemy-shell-bar mb-2.5 flex min-h-[4.35rem] items-center justify-between rounded-[1.4rem] px-3.5 sm:mb-3.5 sm:px-5">
+            <header className="alchemy-shell-bar mb-2.5 flex shrink-0 flex-wrap min-h-[4.35rem] items-center justify-between gap-3 rounded-[1.4rem] px-3.5 py-3 sm:mb-3.5 sm:px-5">
               <div className="flex min-w-0 items-center gap-3.5">
                 <div className="alchemy-gem flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem]">
                   <WandSparkles className="h-5 w-5 text-white" aria-hidden="true" />
@@ -124,9 +125,13 @@ export function MainContent({ user, project }: MainContentProps) {
               </div>
             </header>
 
-            <section className="min-h-0 flex-1">
-              <ResizablePanelGroup direction="horizontal" className="h-full gap-2.5 sm:gap-3.5">
-                <ResizablePanel defaultSize={35} minSize={27} maxSize={48}>
+            <div className="mb-2.5 grid shrink-0 grid-cols-2 gap-2 lg:hidden" role="group" aria-label="Studio workspace">
+              <button type="button" aria-pressed={mobilePanel === "compose"} onClick={() => setMobilePanel("compose")} className="min-h-11 rounded-xl border border-white/15 bg-white/5 px-3 text-sm aria-pressed:bg-violet-500/25 focus-visible:outline-2 focus-visible:outline-cyan-200">Compose</button>
+              <button type="button" aria-pressed={mobilePanel === "stage"} onClick={() => setMobilePanel("stage")} className="min-h-11 rounded-xl border border-white/15 bg-white/5 px-3 text-sm aria-pressed:bg-cyan-500/20 focus-visible:outline-2 focus-visible:outline-cyan-200">Stage &amp; code</button>
+            </div>
+            <section className="min-h-0 min-w-0 flex-1">
+              <ResizablePanelGroup direction="horizontal" className="alchemy-workspace-group h-full gap-2.5 sm:gap-3.5">
+                <ResizablePanel className="alchemy-workspace-panel" data-mobile-active={mobilePanel === "compose"} defaultSize={35} minSize={27} maxSize={48}>
                   <section className="alchemy-panel relative flex h-full flex-col overflow-hidden rounded-[1.45rem]">
                     <div className="alchemy-spectral-line absolute inset-x-8 top-0 h-px opacity-80" />
                     <div className="pointer-events-none absolute left-7 top-5 z-20 flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/20 px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.2em] text-white/32 backdrop-blur-xl">
@@ -139,13 +144,13 @@ export function MainContent({ user, project }: MainContentProps) {
                   </section>
                 </ResizablePanel>
 
-                <ResizableHandle className="group relative w-1 bg-transparent after:absolute after:inset-y-10 after:left-1/2 after:w-px after:-translate-x-1/2 after:bg-white/[0.07] hover:after:bg-cyan-200/45" />
+                <ResizableHandle className="group relative hidden lg:flex w-1 bg-transparent after:absolute after:inset-y-10 after:left-1/2 after:w-px after:-translate-x-1/2 after:bg-white/[0.07] hover:after:bg-cyan-200/45" />
 
-                <ResizablePanel defaultSize={65}>
+                <ResizablePanel className="alchemy-workspace-panel" data-mobile-active={mobilePanel === "stage"} defaultSize={65}>
                   <section className="alchemy-panel relative flex h-full flex-col overflow-hidden rounded-[1.45rem]">
                     <div className="alchemy-spectral-line absolute inset-x-10 top-0 h-px opacity-70" />
 
-                    <div className="flex min-h-[4.2rem] shrink-0 items-center justify-between gap-4 border-b border-white/[0.07] px-4 sm:px-5">
+                    <div className="flex flex-wrap min-h-[4.2rem] shrink-0 items-center justify-between gap-3 border-b border-white/[0.07] px-4 py-3 sm:px-5">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="alchemy-kicker">The Stage</p>
@@ -193,14 +198,14 @@ export function MainContent({ user, project }: MainContentProps) {
                                   onClick={() => setStageMode(value)}
                                   aria-pressed={stageMode === value}
                                   className={cn(
-                                    "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border px-2.5 text-[10px] transition-all duration-200",
+                                    "inline-flex h-11 lg:h-8 shrink-0 items-center gap-1.5 rounded-lg border px-2.5 text-xs transition-all duration-200",
                                     stageMode === value
                                       ? "border-cyan-100/15 bg-[linear-gradient(135deg,rgba(34,211,238,0.10),rgba(139,92,246,0.08))] text-cyan-50 shadow-[0_0_20px_rgba(34,211,238,0.06)]"
                                       : "border-transparent text-white/32 hover:border-white/[0.05] hover:bg-white/[0.035] hover:text-white/65"
                                   )}
                                 >
                                   <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                                  <span className="hidden xl:inline">{label}</span>
+                                  <span>{label}</span>
                                 </button>
                               ))}
                             </div>
@@ -212,7 +217,7 @@ export function MainContent({ user, project }: MainContentProps) {
                                 aria-label="Desktop viewport"
                                 aria-pressed={viewport === "desktop"}
                                 className={cn(
-                                  "flex h-7 w-8 items-center justify-center rounded-md transition",
+                                  "flex h-11 w-11 lg:h-7 lg:w-8 items-center justify-center rounded-md transition",
                                   viewport === "desktop"
                                     ? "bg-white/[0.09] text-white shadow-[0_0_16px_rgba(255,255,255,0.04)]"
                                     : "text-white/28 hover:text-white/65"
@@ -226,7 +231,7 @@ export function MainContent({ user, project }: MainContentProps) {
                                 aria-label="Mobile viewport"
                                 aria-pressed={viewport === "mobile"}
                                 className={cn(
-                                  "flex h-7 w-8 items-center justify-center rounded-md transition",
+                                  "flex h-11 w-11 lg:h-7 lg:w-8 items-center justify-center rounded-md transition",
                                   viewport === "mobile"
                                     ? "bg-white/[0.09] text-white shadow-[0_0_16px_rgba(255,255,255,0.04)]"
                                     : "text-white/28 hover:text-white/65"
@@ -250,7 +255,7 @@ export function MainContent({ user, project }: MainContentProps) {
                                 stageMode === "accessibility" && "grayscale-[0.22] contrast-125",
                                 stageMode === "diff" && "opacity-90 shadow-[18px_18px_0_rgba(217,70,239,0.08)]"
                               )}
-                              style={{ width: viewportWidth }}
+                              style={{ width: viewportWidth, maxWidth: "100%" }}
                             >
                               <div className="alchemy-stage-frame h-full overflow-hidden rounded-[1rem]">
                                 <div className="h-full overflow-hidden rounded-[calc(1rem-1px)] bg-white">
@@ -301,3 +306,4 @@ export function MainContent({ user, project }: MainContentProps) {
     </FileSystemProvider>
   );
 }
+

@@ -413,3 +413,18 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+@media (max-width: 1023px) {
+  .alchemy-workspace-group {
+    flex-direction: column !important;
+  }
+  .alchemy-workspace-panel {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    max-width: 100%;
+  }
+  .alchemy-workspace-panel[data-mobile-active="false"] {
+    display: none;
+  }
+}
