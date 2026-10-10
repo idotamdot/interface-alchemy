@@ -54,7 +54,7 @@ export function MagicLinkForm() {
         <div>
           <p className="alchemy-kicker text-acid-lime">Studio key sent</p>
           <h3 className="mt-2 text-xl font-semibold text-hot-white">Check your email</h3>
-          <p className="mt-2 text-sm leading-6 text-white/55">
+          <p className="mt-2 text-sm leading-6 text-white/80">
             Open the secure link sent to <span className="text-hot-white">{email}</span> in this same browser and browser profile to complete sign-in. If your email app opens another browser, use its option to open the link in this browser.
           </p>
         </div>
@@ -69,7 +69,7 @@ export function MagicLinkForm() {
           </Button>
           <Button
             type="button"
-            className="flex-1 bg-acid-lime text-[#050507] shadow-[0_0_24px_rgba(199,255,74,0.35)] hover:bg-acid-lime/90"
+            className="flex-1 bg-acid-lime text-[#241109] shadow-[0_0_24px_rgba(199,255,74,0.35)] hover:bg-acid-lime/90"
             onClick={sendMagicLink}
           >
             Resend link
@@ -101,7 +101,7 @@ export function MagicLinkForm() {
           onChange={(event) => setEmail(event.target.value)}
           required
           disabled={status === "sending"}
-          className="h-12 rounded-xl border-white/10 bg-black/30 text-hot-white shadow-[inset_0_1px_0_rgba(255,255,255,.025)] placeholder:text-white/25 focus-visible:border-signal-cyan/60 focus-visible:ring-signal-cyan/30"
+          className="h-12 rounded-xl border-white/10 bg-black/30 text-hot-white shadow-[inset_0_1px_0_rgba(255,255,255,.025)] placeholder:text-white/80 focus-visible:border-signal-cyan/60 focus-visible:ring-signal-cyan/30"
         />
       </div>
 
@@ -114,7 +114,7 @@ export function MagicLinkForm() {
       <Button
         type="submit"
         disabled={status === "sending"}
-        className="h-12 w-full rounded-xl bg-[linear-gradient(110deg,#7c3aed,#d946ef,#67e8f9)] text-hot-white shadow-[0_0_34px_rgba(139,92,246,0.24)] hover:brightness-110"
+        className="h-12 w-full rounded-xl bg-[linear-gradient(110deg,#ffcf3d,#ff70aa,#ff963b)] text-hot-white shadow-[0_0_34px_rgba(255,196,48,0.24)] hover:brightness-110"
       >
         <Send className="h-4 w-4" />
         {status === "sending" ? "Sending access link…" : "Send secure access link"}

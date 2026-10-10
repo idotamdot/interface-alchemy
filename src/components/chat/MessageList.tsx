@@ -39,12 +39,12 @@ export function MessageList({
     return (
       <div className="flex min-h-full flex-col items-center justify-center px-5 pb-8 pt-14 text-center">
         <div className="relative mb-7">
-          <div className="absolute -inset-6 rounded-full bg-violet-500/10 blur-3xl" />
-          <div className="absolute -inset-3 rounded-full border border-cyan-100/[0.05]" />
-          <div className="absolute -inset-1.5 rotate-6 rounded-[1.75rem] border border-fuchsia-100/[0.06]" />
+          <div className="absolute -inset-6 rounded-full bg-amber-500/10 blur-3xl" />
+          <div className="absolute -inset-3 rounded-full border border-orange-100/[0.05]" />
+          <div className="absolute -inset-1.5 rotate-6 rounded-[1.75rem] border border-pink-100/[0.06]" />
           <div className="living-edge relative rounded-[1.65rem] bg-white/[0.05] p-[1px]">
-            <div className="relative flex h-[4.8rem] w-[4.8rem] items-center justify-center overflow-hidden rounded-[calc(1.65rem-1px)] bg-[#07070b]">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_22%,rgba(255,255,255,0.16),transparent_23%),radial-gradient(circle_at_32%_32%,rgba(217,70,239,0.34),transparent_46%),radial-gradient(circle_at_78%_78%,rgba(103,232,249,0.24),transparent_42%)]" />
+            <div className="relative flex h-[4.8rem] w-[4.8rem] items-center justify-center overflow-hidden rounded-[calc(1.65rem-1px)] bg-[#2c160d]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_22%,rgba(255,255,255,0.16),transparent_23%),radial-gradient(circle_at_32%_32%,rgba(255,91,157,0.34),transparent_46%),radial-gradient(circle_at_78%_78%,rgba(255,133,55,0.24),transparent_42%)]" />
               <WandSparkles className="relative h-7 w-7 text-white drop-shadow-[0_0_18px_rgba(232,121,249,0.45)]" aria-hidden="true" />
             </div>
           </div>
@@ -62,7 +62,7 @@ export function MessageList({
           {["purpose", "atmosphere", "material", "motion"].map((item) => (
             <span
               key={item}
-              className="alchemy-rune rounded-full px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.2em] text-white/35"
+              className="alchemy-rune rounded-full px-2.5 py-1 font-mono text-sm uppercase tracking-[0.2em] text-white/80"
             >
               {item}
             </span>
@@ -76,10 +76,10 @@ export function MessageList({
                 key={text}
                 type="button"
                 onClick={() => onSuggestionSelect(text)}
-                className="group relative overflow-hidden rounded-[1.15rem] border border-white/[0.08] bg-white/[0.025] p-3.5 text-left transition duration-300 hover:-translate-y-0.5 hover:border-cyan-100/15 hover:bg-white/[0.045] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200/50"
+                className="group relative overflow-hidden rounded-[1.15rem] border border-white/[0.08] bg-white/[0.025] p-3.5 text-left transition duration-300 hover:-translate-y-0.5 hover:border-orange-100/15 hover:bg-white/[0.045] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-200/50"
               >
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(103,232,249,0.06),transparent_42%)] opacity-0 transition-opacity group-hover:opacity-100" />
-                <span className="relative mb-2 flex items-center gap-2 font-mono text-[8px] uppercase tracking-[0.21em] text-violet-100/42 group-hover:text-cyan-100/65">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(255,133,55,0.06),transparent_42%)] opacity-0 transition-opacity group-hover:opacity-100" />
+                <span className="relative mb-2 flex items-center gap-2 font-mono text-sm uppercase tracking-[0.21em] text-amber-100/42 group-hover:text-orange-100/65">
                   <Sparkles className="h-2.5 w-2.5" aria-hidden="true" />
                   {label}
                 </span>
@@ -109,7 +109,7 @@ export function MessageList({
               <div className="flex-shrink-0">
                 <div className="living-edge rounded-xl bg-white/[0.05] p-[1px]">
                   <div className="flex h-9 w-9 items-center justify-center rounded-[calc(0.75rem-1px)] bg-[#09090e]">
-                    <Bot className="h-4 w-4 text-fuchsia-100" aria-hidden="true" />
+                    <Bot className="h-4 w-4 text-pink-100" aria-hidden="true" />
                   </div>
                 </div>
               </div>
@@ -125,7 +125,7 @@ export function MessageList({
                 className={cn(
                   "rounded-[1.15rem] px-4 py-3 text-sm leading-6 shadow-[0_16px_42px_rgba(0,0,0,0.18)]",
                   message.role === "user"
-                    ? "border border-violet-200/15 bg-[linear-gradient(135deg,rgba(124,58,237,0.72),rgba(217,70,239,0.48))] text-white"
+                    ? "border border-amber-200/15 bg-[linear-gradient(135deg,rgba(124,58,237,0.72),rgba(255,91,157,0.48))] text-white"
                     : "border border-white/[0.08] bg-white/[0.04] text-white/84 backdrop-blur-xl"
                 )}
               >
@@ -151,7 +151,7 @@ export function MessageList({
                               key={partIndex}
                               className="mt-3 rounded-xl border border-white/[0.08] bg-black/20 p-3"
                             >
-                              <span className="mb-1 block font-mono text-[9px] uppercase tracking-[0.18em] text-cyan-100/55">
+                              <span className="mb-1 block font-mono text-sm uppercase tracking-[0.18em] text-orange-100/55">
                                 Design reasoning
                               </span>
                               <span className="text-sm text-white/62">
@@ -165,12 +165,12 @@ export function MessageList({
                           return (
                             <div
                               key={partIndex}
-                              className="mt-2 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/25 px-3 py-1.5 font-mono text-[9px] text-white/58"
+                              className="mt-2 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/25 px-3 py-1.5 font-mono text-sm text-white/58"
                             >
                               {isComplete ? (
                                 <div className="h-1.5 w-1.5 rounded-full bg-lime-300 shadow-[0_0_10px_rgba(217,255,114,0.7)]" />
                               ) : (
-                                <Loader2 className="h-3 w-3 animate-spin text-cyan-300" />
+                                <Loader2 className="h-3 w-3 animate-spin text-orange-300" />
                               )}
                               <span>{tool.toolName}</span>
                             </div>
@@ -193,9 +193,9 @@ export function MessageList({
                     {isLoading &&
                       message.role === "assistant" &&
                       messages.indexOf(message) === messages.length - 1 && (
-                        <div className="mt-3 flex items-center gap-2 text-cyan-100/55">
+                        <div className="mt-3 flex items-center gap-2 text-orange-100/55">
                           <Loader2 className="h-3 w-3 animate-spin" />
-                          <span className="font-mono text-[9px] uppercase tracking-[0.16em]">
+                          <span className="font-mono text-sm uppercase tracking-[0.16em]">
                             Resolving the potion
                           </span>
                         </div>
@@ -213,9 +213,9 @@ export function MessageList({
                 ) : isLoading &&
                   message.role === "assistant" &&
                   messages.indexOf(message) === messages.length - 1 ? (
-                  <div className="flex items-center gap-2 text-cyan-100/55">
+                  <div className="flex items-center gap-2 text-orange-100/55">
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    <span className="font-mono text-[9px] uppercase tracking-[0.16em]">
+                    <span className="font-mono text-sm uppercase tracking-[0.16em]">
                       Resolving the potion
                     </span>
                   </div>
@@ -236,3 +236,4 @@ export function MessageList({
     </div>
   );
 }
+
