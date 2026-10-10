@@ -48,8 +48,8 @@ async function waitForAuthenticatedAppUser() {
     if (response.status >= 500) {
       throw new Error(
         body?.error === "AUTH_STATUS_FAILED"
-          ? "Interface Alchemy could not validate the Neon session. Check the deployed Neon Auth environment configuration."
-          : "Interface Alchemy could not validate your secure session."
+          ? "Screen Seer could not validate the Neon session. Check the deployed Neon Auth environment configuration."
+          : "Screen Seer could not validate your secure session."
       );
     }
 
@@ -61,7 +61,7 @@ async function waitForAuthenticatedAppUser() {
   if (lastStatus === 401) {
     if (lastDiagnostic === "SESSION_COOKIE_MISSING") {
       throw new Error(
-        "The magic link returned to Interface Alchemy, but Neon did not set a session cookie. The callback exchange is failing before Interface Alchemy can sign you in."
+        "The magic link returned to Screen Seer, but Neon did not set a session cookie. The callback exchange is failing before Screen Seer can sign you in."
       );
     }
 
@@ -71,12 +71,12 @@ async function waitForAuthenticatedAppUser() {
           ? ` Detected cookie: ${lastCookieNames.join(", ")}.`
           : "";
       throw new Error(
-        `Neon set an authentication cookie, but Interface Alchemy could not validate the session.${cookieDetail}`
+        `Neon set an authentication cookie, but Screen Seer could not validate the session.${cookieDetail}`
       );
     }
   }
 
-  throw new Error("Interface Alchemy could not complete secure entry.");
+  throw new Error("Screen Seer could not complete secure entry.");
 }
 
 export default function AuthCompletePage() {
@@ -137,7 +137,7 @@ export default function AuthCompletePage() {
           setError(
             cause instanceof Error
               ? cause.message
-              : "Interface Alchemy could not complete secure entry."
+              : "Screen Seer could not complete secure entry."
           );
         }
       }
@@ -164,7 +164,7 @@ export default function AuthCompletePage() {
           Opening your private studio
         </h1>
         <p className="mt-3 text-sm leading-6 text-white/50">
-          Interface Alchemy is restoring your projects and any visual work
+          Screen Seer is restoring your projects and any visual work
           created before sign-in.
         </p>
 

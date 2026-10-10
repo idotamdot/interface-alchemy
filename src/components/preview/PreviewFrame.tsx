@@ -109,7 +109,7 @@ export function PreviewFrame() {
               Your visual language will appear here.
             </h3>
             <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/38">
-              Give the composition chamber a feeling and a purpose. Interface Alchemy will resolve the first live surface on this stage.
+              Give the composition chamber a feeling and a purpose. Screen Seer will resolve the first live surface on this stage.
             </p>
           </div>
         </div>

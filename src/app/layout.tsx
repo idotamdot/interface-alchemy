@@ -14,18 +14,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Interface Alchemy",
-    template: "%s · Interface Alchemy",
+    default: "Screen Seer",
+    template: "%s · Screen Seer",
   },
   description:
-    "Turn atmosphere into interface. Interface Alchemy transforms creative intent into live, editable visual systems.",
-  applicationName: "Interface Alchemy",
+    "Turn atmosphere into interface. Screen Seer transforms creative intent into live, editable visual systems.",
+  applicationName: "Screen Seer",
   keywords: [
     "AI interface design",
     "visual design system",
     "interface design",
     "website builder",
-    "Interface Alchemy",
+    "Screen Seer",
   ],
 };
 
@@ -42,3 +42,4 @@ export default function RootLayout({
     </html>
   );
 }
+
