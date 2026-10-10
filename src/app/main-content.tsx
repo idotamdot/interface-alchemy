@@ -24,6 +24,8 @@ import { FileSystemProvider } from "@/lib/contexts/file-system-context";
 import { ChatProvider } from "@/lib/contexts/chat-context";
 import { BrandingStudio } from "@/components/chat/BrandingStudio";
 import { ChatInterface } from "@/components/chat/ChatInterface";
+import { AtelierStage } from "@/components/chat/AtelierStage";
+import type { SeerDirection } from "@/lib/seer-contract";
 import { FileTree } from "@/components/editor/FileTree";
 import { CodeEditor } from "@/components/editor/CodeEditor";
 import { PreviewFrame } from "@/components/preview/PreviewFrame";
@@ -76,12 +78,15 @@ export function MainContent({ user, project }: MainContentProps) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [designRequest, setDesignRequest] = useState(0);
   const [activeView, setActiveView] = useState<WorkspaceView>("preview");
+  const [stageContent, setStageContent] = useState<"design" | "generated">("design");
+  const [chosenVisualDirection, setChosenVisualDirection] = useState<SeerDirection | null>(null);
   const [stageMode, setStageMode] = useState<StageMode>("live");
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [mobilePanel, setMobilePanel] = useState<"compose" | "stage">("compose");
   const [motionPaused, setMotionPaused] = useState(false);
   const projectName = project?.name ?? "Untitled potion";
   const viewportWidth = viewport === "desktop" ? "100%" : "390px";
+  const sampleDirection: SeerDirection = {name:"Atelier sample",direction:"A calm, editorial visual sample; choose a Seer design to replace it.",rationale:"Demonstrate the Stage before a custom direction exists.",palette:{background:"#080B14",text:"#F2EDFF",mutedText:"#C4C3D7",accent:"#BCAEFA",accentText:"#080B14",border:"#BCAEFA"}};
 
   return (
     <FileSystemProvider initialData={project?.data}>
@@ -157,7 +162,7 @@ export function MainContent({ user, project }: MainContentProps) {
                 <div className="seer-atelier-home-grid mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   <button className="seer-home-card seer-yellow" onClick={() => { setHomeOpen(false); setDesignRequest(value => value + 1); }}><Sparkles aria-hidden="true" /><span className="text-3xl font-semibold">Design directions</span><span>Describe your visual style or let the Seer surprise you.</span><span className="mt-auto font-semibold">Explore →</span></button>
                   <button className="seer-home-card seer-lime" onClick={() => { setHomeOpen(false); setDesignRequest(value => value + 1); }}><ScanSearch aria-hidden="true" /><span className="text-3xl font-semibold">Color spiral</span><span>Choose a direction, then explore harmonious palettes and finishes.</span><span className="mt-auto font-semibold">Start with a direction →</span></button>
-                  <button className="seer-home-card seer-clear" onClick={() => { setHomeOpen(false); setMobilePanel("stage"); setActiveView("preview"); }}><Eye aria-hidden="true" /><span className="text-3xl font-semibold">Studio canvas</span><span>Review the live interface and its code.</span><span className="mt-auto font-semibold">Open canvas →</span></button>
+                  <button className="seer-home-card seer-clear" onClick={() => { setHomeOpen(false); setMobilePanel("stage"); setActiveView("preview"); setStageContent("design"); }}><Eye aria-hidden="true" /><span className="text-3xl font-semibold">Studio canvas</span><span>Review the live interface and its code.</span><span className="mt-auto font-semibold">Open canvas →</span></button>
                   <button className="seer-home-card seer-pink" onClick={() => setBrandingOpen(true)}><WandSparkles aria-hidden="true" /><span className="text-3xl font-semibold">Branding & artwork</span><span>Artwork and icons shaped by your description.</span><span className="mt-auto font-semibold">Create artwork →</span></button>
                   <div className="seer-home-card seer-orange"><Move3d aria-hidden="true" /><span className="text-3xl font-semibold">Motion & transitions</span><span>Give your screens a rhythm of their own.</span><span className="mt-auto font-semibold">Coming next</span></div>
                 </div>
@@ -177,7 +182,7 @@ export function MainContent({ user, project }: MainContentProps) {
                       composition chamber
                     </div>
                     <div className="min-h-0 flex-1 pt-8">
-                      <ChatInterface openRequest={designRequest} motionPaused={motionPaused} />
+                      <ChatInterface openRequest={designRequest} motionPaused={motionPaused} onDirectionSelected={direction => { setChosenVisualDirection(direction); setActiveView("preview"); setStageContent("design"); setMobilePanel("stage"); }} />
                     </div>
                   </section>
                 </ResizablePanel>
@@ -227,7 +232,11 @@ export function MainContent({ user, project }: MainContentProps) {
                     <div className="relative min-h-0 flex-1 overflow-hidden bg-[#241109]/70">
                       {activeView === "preview" ? (
                         <div className="flex h-full flex-col p-2.5 sm:p-3.5">
-                          <div className="mb-2.5 flex shrink-0 items-center justify-between gap-3 rounded-[1rem] border border-white/[0.07] bg-white/[0.025] px-2.5 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+                          <div role="group" aria-label="Stage content" className="mb-2 flex shrink-0 flex-wrap gap-2">
+                            <button type="button" aria-pressed={stageContent === "design"} onClick={() => setStageContent("design")} className="seer-stage-toggle">Visual design proof</button>
+                            <button type="button" aria-pressed={stageContent === "generated"} onClick={() => setStageContent("generated")} className="seer-stage-toggle">Generated interface</button>
+                          </div>
+                          <div hidden={stageContent !== "generated"} className="mb-2.5 flex shrink-0 items-center justify-between gap-3 rounded-[1rem] border border-white/[0.07] bg-white/[0.025] px-2.5 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
                             <div className="flex min-w-0 items-center gap-1 overflow-x-auto">
                               {stageModes.map(({ value, label, icon: Icon }) => (
                                 <button
@@ -280,7 +289,7 @@ export function MainContent({ user, project }: MainContentProps) {
                             </div>
                           </div>
 
-                          <div className="alchemy-stage-surface relative min-h-0 flex-1 overflow-hidden rounded-[1.15rem] p-3 sm:p-5">
+                          {stageContent === "design" ? <div className="min-h-0 flex-1 overflow-y-auto rounded-[1.15rem] p-3 sm:p-5"><AtelierStage direction={chosenVisualDirection ?? sampleDirection}/>{!chosenVisualDirection&&<p className="mt-4 rounded-xl border border-white/20 bg-white/5 p-4 text-sm text-white/85">This is a sample visual proof. Open Design Directions, generate options and select a direction to see your own design here.</p>}</div> : <div className="alchemy-stage-surface relative min-h-0 flex-1 overflow-hidden rounded-[1.15rem] p-3 sm:p-5">
                             <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] [background-size:30px_30px]" />
                             <div className="pointer-events-none absolute left-6 top-6 h-24 w-24 rounded-full bg-amber-500/10 blur-3xl" />
                             <div className="pointer-events-none absolute bottom-5 right-8 h-28 w-28 rounded-full bg-orange-300/10 blur-3xl" />
@@ -303,7 +312,7 @@ export function MainContent({ user, project }: MainContentProps) {
                             </div>
                           </div>
 
-                          <div className="mt-2.5 flex shrink-0 items-center justify-between px-1 font-mono text-sm uppercase tracking-[0.17em] text-white/80">
+                          <div hidden={stageContent !== "generated"} className="mt-2.5 flex shrink-0 items-center justify-between px-1 font-mono text-sm uppercase tracking-[0.17em] text-white/80">
                             <span>{stageMode} lens</span>
                             <span>
                               {viewport === "desktop" ? "fluid canvas" : "390px responsive"}

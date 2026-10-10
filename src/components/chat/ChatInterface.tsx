@@ -17,7 +17,7 @@ import { z } from "zod";
 import { checkPalette, directionPrompt, seerResultSchema, type SeerResult } from "@/lib/seer-contract";
 import { useChat } from "@/lib/contexts/chat-context";
 
-export function ChatInterface({ openRequest = 0, motionPaused = false }: { openRequest?: number; motionPaused?: boolean }) {
+export function ChatInterface({ openRequest = 0, motionPaused = false, onDirectionSelected }: { openRequest?: number; motionPaused?: boolean; onDirectionSelected?: (direction: SeerResult["final"]) => void }) {
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [workspace, setWorkspace] = useState<"directions" | number>("directions");
   const [atelierRoom, setAtelierRoom] = useState<"brief" | "salon" | "compare" | "materials" | "stage">("brief");
@@ -67,6 +67,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
     const base = styleBrief;
     const output = `${base ? base + "\n\n" : "Design an interface.\n\n"}${directionPrompt(result)}`;
     setSelectedDirection(result.final.name);
+    onDirectionSelected?.(result.final);
     setInput(output);
     setAtelierRoom("materials");
   };
@@ -163,7 +164,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
               <button type="button" aria-current={atelierRoom === "salon" ? "step" : undefined} disabled={!seerResults.length} onClick={() => setAtelierRoom("salon")}>02 <span>The salon</span></button>
               <button type="button" aria-current={atelierRoom === "compare" ? "step" : undefined} disabled={seerResults.length < 2} onClick={() => setAtelierRoom("compare")}>03 <span>Compare</span></button>
               <button type="button" aria-current={atelierRoom === "materials" ? "step" : undefined} disabled={!seerResults.some(item => item.final.name === selectedDirection)} onClick={() => setAtelierRoom("materials")}>04 <span>Materials</span></button>
-              <button type="button" aria-current={atelierRoom === "stage" ? "step" : undefined} disabled={!seerResults.some(item => item.final.name === selectedDirection)} onClick={() => setAtelierRoom("stage")}>05 <span>The Stage</span></button>
+              <button type="button" aria-current={atelierRoom === "stage" ? "step" : undefined} onClick={() => setAtelierRoom("stage")}>05 <span>The Stage</span></button>
               <span className="seer-room-nav-note">Compose → Review → Select</span>
             </nav>
             <div hidden={workspace !== "directions"} aria-busy={seerLoading} className="seer-atelier-body">
@@ -243,8 +244,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
             <button type="button" onClick={() => setAtelierRoom("salon")} className="seer-atelier-exit mt-6 min-h-12 rounded-full border px-5">← Back to the Salon</button>
           </div>
           <div hidden={atelierRoom !== "stage"}>
-            {seerResults.find(item => item.final.name === selectedDirection) ? <AtelierStage direction={seerResults.find(item => item.final.name === selectedDirection)!.final} /> :
-              <p>Choose a direction in the Salon before entering the Stage.</p>}
+            <AtelierStage direction={seerResults.find(item => item.final.name === selectedDirection)?.final ?? {name:"Atelier sample",direction:"Explore sample layouts, or choose a direction for a personalized proof.",rationale:"Preview before selection",palette:{background:"#080B14",text:"#F2EDFF",mutedText:"#C4C3D7",accent:"#BCAEFA",accentText:"#080B14",border:"#BCAEFA"}}} />
             <button type="button" onClick={() => setAtelierRoom("materials")} className="seer-atelier-exit mt-6 min-h-12 rounded-full border px-5">← Materials Library</button>
           </div>
           <section className="mt-5 rounded-2xl border border-white/20 bg-white/5 p-5" aria-label="Website Builder handoff">
