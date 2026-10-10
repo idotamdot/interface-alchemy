@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Activity, Orbit, Sparkles, Shuffle } from "lucide-react";
 import { MessageList } from "./MessageList";
+import { ColorSpiral } from "./ColorSpiral";
 import { DesignPortfolio } from "./DesignPortfolio";
 import { MessageInput } from "./MessageInput";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -149,6 +150,7 @@ export function ChatInterface() {
               {result.contrastCorrections?.length ? <p className="mt-2 text-sm text-lime-100">Contrast checks corrected {result.contrastCorrections.join(", ")} while preserving the chosen background and accent.</p> : null}
               <details className="mt-2 text-base leading-6 text-white/90"><summary className="min-h-11 cursor-pointer py-2">Idea, opinion & final choice</summary><p>OpenAI’s idea: {result.proposal.name}. {result.proposal.rationale}</p><p className="mt-2">Gemini’s opinion: {result.critique}</p><p className="mt-2">OpenAI’s final choice: {result.final.rationale}</p><p className="mt-2">These checks cover the solid palette pairs. The generated screen still needs a rendered accessibility review.</p></details>
               <button type="button" onClick={() => chooseDirection(result)} disabled={seerLoading || isSynthesizing} aria-pressed={selectedDirection === result.final.name} className="mt-2 min-h-11 rounded-full border border-lime-200/40 bg-lime-200/10 px-4 text-base text-lime-100 disabled:opacity-50">Use {result.final.name}</button>
+              <ColorSpiral result={result} onChoose={chooseDirection} />
               <DesignPortfolio result={result} onChoose={chooseDirection} />
             </article>)}
           </div>

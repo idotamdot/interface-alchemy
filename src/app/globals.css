@@ -485,3 +485,8 @@
 @media (prefers-reduced-motion: reduce) {
   .alchemy-atmosphere, .alchemy-spectral-line { animation: none !important; }
 }
+
+@keyframes seer-shimmer { from { opacity: .55; transform: scale(.9); } to { opacity: 1; transform: scale(1.08); } }
+.seer-sparkle { animation: seer-shimmer 3s ease-in-out infinite alternate; }
+.alchemy-atmosphere[data-motion="paused"] .seer-sparkle { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .seer-sparkle { animation: none !important; } }
