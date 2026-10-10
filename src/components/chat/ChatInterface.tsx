@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Activity, Orbit, Sparkles, Shuffle } from "lucide-react";
 import { MessageList } from "./MessageList";
+import { DesignPortfolio } from "./DesignPortfolio";
 import { MessageInput } from "./MessageInput";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { z } from "zod";
@@ -134,6 +135,7 @@ export function ChatInterface() {
           </div>
           <p role="status" className="mt-2 text-sm leading-6 text-white/90">{seerLoading ? "Proposing ideas, gathering a second opinion, and checking final palette contrast. Your draft stays intact." : selectedDirection ? `${selectedDirection} added to your draft. Review before synthesizing.` : "Two AIs propose, critique, and decide. Choose a direction to add to your draft."}</p>
           {seerError && <p role="alert" className="mt-2 text-base text-pink-100">{seerError}</p>}
+          <DesignPortfolio onChoose={chooseDirection} />
           <div className="space-y-3">
             {seerResults.map((result, index) => <article key={index} className="mt-3 rounded-xl border border-white/25 p-3">
               <h3 className="text-lg font-semibold text-white">{index + 1}. {result.final.name}</h3>
@@ -146,6 +148,7 @@ export function ChatInterface() {
               <p className="mt-2 text-sm leading-6 text-white/90">{checkPalette(result.final.palette).map(check => `${check.pair}: ${check.ratio.toFixed(2)}:1`).join(" · ")}</p>
               <details className="mt-2 text-base leading-6 text-white/90"><summary className="min-h-11 cursor-pointer py-2">Idea, opinion & final choice</summary><p>OpenAI’s idea: {result.proposal.name}. {result.proposal.rationale}</p><p className="mt-2">Gemini’s opinion: {result.critique}</p><p className="mt-2">OpenAI’s final choice: {result.final.rationale}</p><p className="mt-2">These checks cover the solid palette pairs. The generated screen still needs a rendered accessibility review.</p></details>
               <button type="button" onClick={() => chooseDirection(result)} disabled={seerLoading || isSynthesizing} aria-pressed={selectedDirection === result.final.name} className="mt-2 min-h-11 rounded-full border border-lime-200/40 bg-lime-200/10 px-4 text-base text-lime-100 disabled:opacity-50">Use {result.final.name}</button>
+              <DesignPortfolio result={result} onChoose={chooseDirection} />
             </article>)}
           </div>
         </div>

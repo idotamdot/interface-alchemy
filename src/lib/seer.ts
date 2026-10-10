@@ -9,7 +9,7 @@ export const callSeerAI: SeerCall = async (provider, system, prompt, signal) => 
       method: "POST", signal, headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({ model: process.env.SEER_OPENAI_MODEL || "gpt-4.1-mini", max_tokens: 1400, temperature: .85, response_format: { type: "json_object" }, messages: [{ role: "system", content: system }, { role: "user", content: prompt }] }),
     });
-    if (!response.ok) throw new Error("Seer proposal unavailable");
+    if (!response.ok) throw new Error(`SEER_OPENAI_HTTP_${response.status}`);
     const data = await response.json();
     const text = data.choices?.[0]?.message?.content;
     if (typeof text !== "string" || !text.trim()) throw new Error("Empty Seer response");
@@ -23,7 +23,7 @@ export const callSeerAI: SeerCall = async (provider, system, prompt, signal) => 
     method: "POST", signal, headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
     body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 2400, temperature: .4 } }),
   });
-  if (!response.ok) throw new Error("Seer critique unavailable");
+  if (!response.ok) throw new Error(`SEER_GEMINI_HTTP_${response.status}`);
   const data = await response.json();
   const text = data.candidates?.[0]?.content?.parts?.filter((part: { thought?: boolean }) => !part.thought).map((part: { text?: string }) => part.text ?? "").join("");
   if (typeof text !== "string" || !text.trim()) throw new Error("Empty Seer critique");

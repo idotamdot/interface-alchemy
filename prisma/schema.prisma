@@ -20,6 +20,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   projects  Project[]
+  portfolio PortfolioDesign[]
 }
 
 model Project {
@@ -34,4 +35,20 @@ model Project {
   user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, updatedAt])
+}
+
+
+model PortfolioDesign {
+  id          String   @id @default(cuid())
+  userId      String
+  fingerprint String
+  result      Json
+  visibility  String   @default("private")
+  donatedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, fingerprint])
+  @@index([userId, updatedAt])
+  @@index([visibility, donatedAt])
 }

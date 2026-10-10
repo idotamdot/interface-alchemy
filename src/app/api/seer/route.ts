@@ -20,7 +20,9 @@ export async function POST(req: Request) {
     const approaches = ["bold editorial with expressive hierarchy", "calm tactile with spacious structure", "playful geometric with confident rhythm"];
     const results = await Promise.all(approaches.slice(0, body.count).map(approach => deliberateDirection(`${body.brief || "Explore an original, accessible website visual direction."}\nExplore this distinct approach: ${approach}. Creative seed: ${crypto.randomUUID()}`, signal)));
     return Response.json({ results }, { headers: { "Cache-Control": "no-store" } });
-  } catch {
-    return Response.json({ error: "The Seer could not complete its review with verified palette contrast. Your draft is intact. Try again." }, { status: 502 });
+  } catch (error) {
+    const code = error instanceof z.ZodError ? "SEER_CONTRACT_OR_CONTRAST" : error instanceof Error && /^SEER_[A-Z_]+_[0-9]+$/.test(error.message) ? error.message : error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError") ? "SEER_TIMEOUT" : "SEER_INVALID_RESPONSE";
+    console.warn("Seer review failed", { code });
+    return Response.json({ code, error: "The Seer could not complete its review with verified palette contrast. Your draft is intact. Try again." }, { status: 502 });
   }
 }
