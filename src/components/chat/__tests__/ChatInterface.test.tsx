@@ -155,13 +155,14 @@ test("the Seer reviews options before changing a draft and preserves the brief w
   render(<ChatInterface />);
   fireEvent.click(screen.getByRole("button", { name: "Open design workspace" }));
   fireEvent.click(screen.getByRole("button", { name: "Design my idea" }));
-  await waitFor(() => expect(screen.getByRole("button", { name: "Use Sunlit" })).toBeDefined());
+  await waitFor(() => expect(screen.getByRole("button", { name: "Choose this style: Sunlit" })).toBeDefined());
   expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ brief: "A multilingual shop", count: 3 });
   expect(setInput).not.toHaveBeenCalled();
   expect(baseChatState.append).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole("button", { name: "Use Sunlit" }));
+  fireEvent.click(screen.getByRole("button", { name: "Choose this style: Sunlit" }));
   expect(setInput.mock.calls[0][0]).toContain("A multilingual shop");
   expect(setInput.mock.calls[0][0]).toContain("4.5:1");
+  expect((screen.getByLabelText("Describe your visual style") as HTMLTextAreaElement).value).toBe("A multilingual shop");
   fireEvent.click(screen.getByRole("button", { name: "Explore color spiral" }));
   expect(screen.getByRole("heading", { name: "Explore your color story" })).toBeDefined();
   fireEvent.change(screen.getByRole("slider"), { target: { value: "3" } });
@@ -193,4 +194,13 @@ test("a failed Seer review keeps the draft and offers recovery", async () => {
   expect(screen.queryByRole("dialog")).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Open design workspace" }));
   expect((screen.getByLabelText("Number of directions") as HTMLSelectElement).value).toBe("2");
+});
+
+test("reopens legacy selected drafts with a clean visual brief", () => {
+  mockedUseChat.mockReturnValue({...baseChatState,input:"Amber glass cards\n\nVisual direction: Saved direction with technical tokens."});
+  render(<ChatInterface />);
+  fireEvent.click(screen.getByRole("button",{name:"Open design workspace"}));
+  expect((screen.getByLabelText("Describe your visual style") as HTMLTextAreaElement).value).toBe("Amber glass cards");
+  fireEvent.change(screen.getByLabelText("Describe your visual style"),{target:{value:""}});
+  expect(screen.getByRole("button",{name:"Design my idea"})).toHaveProperty("disabled",true);
 });
