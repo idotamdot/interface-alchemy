@@ -54,7 +54,7 @@ export function MessageList({
         <h2 className="mt-3 max-w-[31rem] text-balance text-[1.8rem] font-semibold leading-[1.08] tracking-[-0.05em] text-white sm:text-[2.15rem]">
           Turn atmosphere into an interface.
         </h2>
-        <p className="mt-3 max-w-[30rem] text-pretty text-sm leading-6 text-white/42">
+        <p className="mt-3 max-w-[30rem] text-pretty text-sm leading-6 text-white/80">
           Describe the purpose, the mood, the energy, the material. Screen Seer will turn that intent into a live visual language.
         </p>
 
@@ -83,7 +83,7 @@ export function MessageList({
                   <Sparkles className="h-2.5 w-2.5" aria-hidden="true" />
                   {label}
                 </span>
-                <span className="relative block text-[13px] leading-5 text-white/58 transition-colors group-hover:text-white/82">
+                <span className="relative block text-sm leading-5 text-white/80 transition-colors group-hover:text-white/82">
                   {text}
                 </span>
               </button>
@@ -154,7 +154,7 @@ export function MessageList({
                               <span className="mb-1 block font-mono text-sm uppercase tracking-[0.18em] text-orange-100/55">
                                 Design reasoning
                               </span>
-                              <span className="text-sm text-white/62">
+                              <span className="text-sm text-white/80">
                                 {part.reasoning}
                               </span>
                             </div>
@@ -165,7 +165,7 @@ export function MessageList({
                           return (
                             <div
                               key={partIndex}
-                              className="mt-2 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/25 px-3 py-1.5 font-mono text-sm text-white/58"
+                              className="mt-2 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/25 px-3 py-1.5 font-mono text-sm text-white/80"
                             >
                               {isComplete ? (
                                 <div className="h-1.5 w-1.5 rounded-full bg-lime-300 shadow-[0_0_10px_rgba(217,255,114,0.7)]" />
@@ -178,7 +178,7 @@ export function MessageList({
                         }
                         case "source":
                           return (
-                            <div key={partIndex} className="mt-2 text-xs text-white/38">
+                            <div key={partIndex} className="mt-2 text-xs text-white/80">
                               Source: {JSON.stringify(part.source)}
                             </div>
                           );

@@ -22,7 +22,7 @@ export function ChatInterface() {
         "[data-radix-scroll-area-viewport]"
       );
       if (scrollContainer) {
-        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        scrollContainer.scrollTop = messages.length > 0 ? scrollContainer.scrollHeight : 0;
       }
     }
   }, [messages]);
