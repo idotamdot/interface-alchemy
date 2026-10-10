@@ -141,6 +141,12 @@ export function MainContent({ user, project }: MainContentProps) {
             {settingsOpen && <section aria-label="Studio settings and profile" className="mb-4 rounded-2xl border border-white/30 bg-[#241109] p-5 text-lg"><p>{user ? user.email : "You can create and review without signing in. Private portfolio saving requires sign-in."}</p><p>Use Pause motion above for a still background. Your device’s reduced-motion preference is also respected.</p><button onClick={() => setSettingsOpen(false)} className="mt-3 min-h-12 rounded-full border border-white/40 px-5">Close settings</button></section>}
             <section hidden={!homeOpen} aria-label="Studio home" className="seer-home relative min-h-0 flex-1 overflow-y-auto rounded-3xl p-5 sm:p-10">
               <div className="seer-amber-glow" aria-hidden="true" />
+              <svg className="seer-lime-trace" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+                <g fill="none" stroke="#d7f58b" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M-20 615 L145 560 L235 580 L335 480 L420 495 L530 380 L650 400 L770 285 L900 310 L1040 185 L1230 150" />
+                  <path d="M235 580 L260 650 L350 685 M335 480 L320 390 L375 330 M530 380 L490 280 L535 205 M650 400 L690 490 L780 535 M770 285 L760 210 L815 145 M900 310 L950 410 L1070 445 M1040 185 L1020 90 L1100 35" />
+                </g>
+              </svg>
               <div className="relative mx-auto max-w-6xl">
                 <p className="text-lg text-[#ffe4b2]">Your imagination, made visible</p>
                 <h2 className="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-6xl">What would you like<br />to explore?</h2>

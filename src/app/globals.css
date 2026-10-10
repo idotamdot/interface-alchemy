@@ -506,3 +506,9 @@ button.seer-home-card:hover { background: linear-gradient(140deg, rgba(var(--gla
 .seer-nav-button:disabled { opacity: .35; }
 [data-motion="paused"] .seer-amber-glow, [data-motion="paused"] .seer-sparkle { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .seer-amber-glow { animation: none; } }
+
+/* A rare, slow lime trace: one gentle appearance per three-minute cycle. */
+.seer-lime-trace { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; animation: seer-rare-lime 180s linear infinite; }
+@keyframes seer-rare-lime { 0%, 94%, 100% { opacity: 0; } 96%, 97% { opacity: .13; } }
+[data-motion="paused"] .seer-lime-trace { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .seer-lime-trace { display: none; animation: none; } }
