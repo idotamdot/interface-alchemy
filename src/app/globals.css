@@ -583,3 +583,5 @@ button.seer-home-card:hover { background: linear-gradient(140deg, rgba(var(--gla
 .seer-compare-grid > section{min-width:0;}
 @media(max-width:960px){.seer-compare-grid{grid-template-columns:1fr;}}
 @media(max-width:580px){.seer-compare-picker{grid-template-columns:1fr;}}
+
+.seer-material-card{min-width:0;border:1px solid rgba(207,196,248,.22);border-radius:1.3rem;background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.012)),rgba(15,16,31,.8);padding:1.25rem;color:#f5f3ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}

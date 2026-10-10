@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Activity, Orbit, Sparkles, Shuffle } from "lucide-react";
 import { MessageList } from "./MessageList";
 import { ScreenStylePreview } from "./ScreenStylePreview";
+import { MaterialsLibrary } from "./MaterialsLibrary";
 import { ColorSpiral } from "./ColorSpiral";
 import { DesignPortfolio } from "./DesignPortfolio";
 import { MessageInput } from "./MessageInput";
@@ -17,7 +18,7 @@ import { useChat } from "@/lib/contexts/chat-context";
 export function ChatInterface({ openRequest = 0, motionPaused = false }: { openRequest?: number; motionPaused?: boolean }) {
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [workspace, setWorkspace] = useState<"directions" | number>("directions");
-  const [atelierRoom, setAtelierRoom] = useState<"brief" | "salon" | "compare">("brief");
+  const [atelierRoom, setAtelierRoom] = useState<"brief" | "salon" | "compare" | "materials">("brief");
   const [compareIndices, setCompareIndices] = useState<[number, number]>([0, 1]);
   const [explorations, setExplorations] = useState<Record<number, { seed: number; position: number }>>({});
   useEffect(() => { if (openRequest > 0) { setWorkspace("directions"); setWorkspaceOpen(true); } }, [openRequest]);
@@ -64,6 +65,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
     const output = `${base ? base + "\n\n" : "Design an interface.\n\n"}${directionPrompt(result)}`;
     setSelectedDirection(result.final.name);
     setInput(output);
+    setAtelierRoom("materials");
   };
 
   const isSubmitted = status === "submitted";
@@ -146,6 +148,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
               <button type="button" aria-current={atelierRoom === "brief" ? "step" : undefined} onClick={() => setAtelierRoom("brief")}>01 <span>Creative brief</span></button>
               <button type="button" aria-current={atelierRoom === "salon" ? "step" : undefined} disabled={!seerResults.length} onClick={() => setAtelierRoom("salon")}>02 <span>The salon</span></button>
               <button type="button" aria-current={atelierRoom === "compare" ? "step" : undefined} disabled={seerResults.length < 2} onClick={() => setAtelierRoom("compare")}>03 <span>Compare</span></button>
+              <button type="button" aria-current={atelierRoom === "materials" ? "step" : undefined} disabled={!seerResults.some(item => item.final.name === selectedDirection)} onClick={() => setAtelierRoom("materials")}>04 <span>Materials</span></button>
               <span className="seer-room-nav-note">Compose → Review → Select</span>
             </nav>
             <div hidden={workspace !== "directions"} aria-busy={seerLoading} className="seer-atelier-body">
@@ -218,6 +221,11 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
                 </section>;
               })}
             </div>
+          </div>
+          <div hidden={atelierRoom !== "materials"}>
+            {seerResults.find(item => item.final.name === selectedDirection) ? <MaterialsLibrary direction={seerResults.find(item => item.final.name === selectedDirection)!.final} /> :
+              <p className="text-lg text-[#d6d0e9]">Select a generated direction from the Salon or Compare room to inspect its materials.</p>}
+            <button type="button" onClick={() => setAtelierRoom("salon")} className="seer-atelier-exit mt-6 min-h-12 rounded-full border px-5">← Back to the Salon</button>
           </div>
             </div>
             {seerResults.map((result, index) => <div key={index} hidden={workspace !== index}><ColorSpiral expanded exploration={explorations[index]} onExplore={value => setExplorations(current => ({ ...current, [index]: value }))} result={result} onChoose={chooseDirection} /></div>)}
