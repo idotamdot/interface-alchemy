@@ -85,7 +85,7 @@ export function MagicLinkForm() {
         <div className="flex items-start gap-3">
           <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-electric-orchid drop-shadow-[0_0_10px_var(--electric-orchid)]" />
           <p className="text-sm leading-6 text-white/65">
-            No password. Screen Seer sends one secure access link and creates your workspace the first time you enter.
+            No password. Screen Seer Studio sends one secure access link and creates your workspace the first time you enter.
           </p>
         </div>
       </div>

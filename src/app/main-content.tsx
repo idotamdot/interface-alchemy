@@ -98,7 +98,7 @@ export function MainContent({ user, project }: MainContentProps) {
                 <div className="min-w-0">
                   <div className="flex items-center gap-2.5">
                     <h1 className="alchemy-wordmark truncate text-[1.05rem] font-semibold tracking-[-0.045em] sm:text-[1.25rem]">
-                      Screen Seer
+                      Screen Seer Studio
                     </h1>
                     <span className="hidden rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-sm uppercase tracking-[0.22em] text-white/80 md:inline">
                       visual language engine

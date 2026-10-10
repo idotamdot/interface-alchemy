@@ -14,18 +14,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Screen Seer",
-    template: "%s · Screen Seer",
+    default: "Screen Seer Studio",
+    template: "%s · Screen Seer Studio",
   },
   description:
-    "Turn atmosphere into interface. Screen Seer transforms creative intent into live, editable visual systems.",
-  applicationName: "Screen Seer",
+    "Turn atmosphere into interface. Screen Seer Studio transforms creative intent into live, editable visual systems.",
+  applicationName: "Screen Seer Studio",
   keywords: [
     "AI interface design",
     "visual design system",
     "interface design",
     "website builder",
-    "Screen Seer",
+    "Screen Seer Studio",
   ],
 };
 

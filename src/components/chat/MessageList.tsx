@@ -55,7 +55,7 @@ export function MessageList({
           Turn atmosphere into an interface.
         </h2>
         <p className="mt-3 max-w-[30rem] text-pretty text-sm leading-6 text-white/80">
-          Describe the purpose, the mood, the energy, the material. Screen Seer will turn that intent into a live visual language.
+          Describe the purpose, the mood, the energy, the material. Screen Seer Studio will turn that intent into a live visual language.
         </p>
 
         <div className="mt-5 flex flex-wrap justify-center gap-2">
