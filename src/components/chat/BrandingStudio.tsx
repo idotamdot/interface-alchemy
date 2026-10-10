@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { BrandKitReview, useBrandKit } from "./BrandKitReview";
 import { artStyles, brandingResultSchema, type BrandImage } from "@/lib/branding-contract";
 const control = "min-h-12 rounded-xl border border-white/30 bg-[#241109] px-4 text-lg text-white";
 export function BrandingStudio({ open, onOpenChange, motionPaused }: { open: boolean; onOpenChange: (open: boolean) => void; motionPaused: boolean }) {
+  const kitState = useBrandKit();
   const [description, setDescription] = useState("");
   const [style, setStyle] = useState<(typeof artStyles)[number]>("Geometric");
   const [kind, setKind] = useState<"artwork" | "icon">("artwork");
@@ -37,8 +39,9 @@ export function BrandingStudio({ open, onOpenChange, motionPaused }: { open: boo
         <p role="status">{busy ? "This may take a minute. You can return home while it works; your previous artwork stays intact." : "Choices stay in this studio session. Downloads and account saving are not part of this step yet."}</p>
         {error && <p role="alert" className="text-pink-100">{error}</p>}
       </form>
-      <section aria-label="Artwork options" className="mt-8 grid gap-6 md:grid-cols-2">{images.map((image, index) => <article key={image.id} className="seer-home-card seer-pink"><h3 className="text-2xl font-semibold">{image.style} {image.kind} · {index + 1}</h3>{/* Actual generated image data; no placeholder artwork. */}<img src={image.image} alt={`AI-generated ${image.style} ${image.kind} concept for: ${image.description}`} className="aspect-square w-full rounded-2xl bg-[#f1e5d6] object-contain" /><button type="button" aria-pressed={accepted?.id === image.id} onClick={() => { setAccepted(image); setAltText(image.description); }} className={control}>{accepted?.id === image.id ? "Accepted for this session" : "Use this artwork"}</button></article>)}</section>
+      <section aria-label="Artwork options" className="mt-8 grid gap-6 md:grid-cols-2">{images.map((image, index) => <article key={image.id} className="seer-home-card seer-pink"><h3 className="text-2xl font-semibold">{image.style} {image.kind} · {index + 1}</h3>{/* Actual generated image data; no placeholder artwork. */}<img src={image.image} alt={`AI-generated ${image.style} ${image.kind} concept for: ${image.description}`} className="aspect-square w-full rounded-2xl bg-[#f1e5d6] object-contain" /><button type="button" aria-pressed={accepted?.id === image.id} onClick={() => { setAccepted(image); setAltText(image.description.slice(0,500)); }} className={control}>{accepted?.id === image.id ? "Accepted for this session" : "Use this artwork"}</button></article>)}</section>
       {accepted && <section aria-label="Accepted branding" className="seer-home-card seer-lime mt-8"><h3 className="text-2xl font-semibold">Your accepted {accepted.kind}</h3><img src={accepted.image} alt={altText} className="max-h-72 rounded-xl bg-[#f1e5d6] object-contain" /><label className="w-full">Describe the image for screen readers<input value={altText} maxLength={500} onChange={event => setAltText(event.target.value)} className={`${control} mt-3 w-full`} /></label><p>Review this description to match what the artwork actually shows. Brand icons still need readable labels when used as controls.</p><button type="button" onClick={() => setAccepted(null)} className={control}>Remove choice</button></section>}
+      {accepted && <BrandKitReview source={accepted} alt={altText} state={kitState} />}
     </div>
   </DialogContent></Dialog>;
 }
