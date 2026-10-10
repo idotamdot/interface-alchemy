@@ -3,7 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { portfolioEntrySchema, type PortfolioEntry } from "@/lib/portfolio-contract";
 import { directionSchema, type SeerResult } from "@/lib/seer-contract";
-const button = "min-h-11 rounded-full border border-lime-200/40 bg-lime-200/10 px-4 text-base text-lime-100 disabled:opacity-50";
+const button = "seer-atelier-exit min-h-11 rounded-full border px-4 text-base text-white disabled:opacity-50";
 const communitySchema = z.object({ entries: z.array(z.object({ id: z.string(), final: directionSchema })).max(60) });
 export function DesignPortfolio({ result, onChoose }: { result?: SeerResult; onChoose: (result: SeerResult) => void }) {
   const [entries, setEntries] = useState<PortfolioEntry[]>([]);
@@ -44,7 +44,7 @@ export function DesignPortfolio({ result, onChoose }: { result?: SeerResult; onC
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not update sharing."); }
     finally { setBusy(false); }
   };
-  return <section aria-label="Design portfolio" className="mt-3 space-y-2 text-base text-white/90">
+  return <section aria-label="Design portfolio" className="seer-atelier-portfolio mt-6 space-y-3 text-base text-white/90">
     <div className="flex flex-wrap gap-2">
       {result ? <><button type="button" className={button} disabled={busy} onClick={save}>Save to portfolio</button></> : <><button type="button" className={button} disabled={busy} onClick={() => load("private")}>My portfolio</button><button type="button" className={button} disabled={busy} onClick={() => load("community")}>Community portfolio</button></>}
       {mode !== "closed" && <button type="button" className={button} onClick={() => setMode("closed")}>Close portfolio</button>}
@@ -53,7 +53,7 @@ export function DesignPortfolio({ result, onChoose }: { result?: SeerResult; onC
     <p role="status">{busy ? "Opening your collection…" : message}</p>
     {mode === "private" && !busy && !message && entries.length === 0 && <p>Your portfolio is empty. Save a Seer direction to keep it for later.</p>}
     {mode === "community" && !busy && community.length === 0 && <p>No donated directions yet.</p>}
-    {mode === "private" && entries.map(entry => <article key={entry.id} className="rounded-xl border border-white/25 p-3">
+    {mode === "private" && entries.map(entry => <article key={entry.id} className="seer-atelier-portfolio-card rounded-2xl border p-5">
       <h4 className="text-lg font-semibold">{entry.result.final.name}</h4><p>{entry.result.final.direction}</p>
       <div className="mt-2 flex flex-wrap gap-2"><button type="button" className={button} disabled={busy} onClick={() => onChoose(entry.result)}>Use direction</button></div>
       {entry.visibility === "community" ? <button type="button" className={`${button} mt-2`} disabled={busy} onClick={() => share(entry, "withdraw")}>Withdraw donation</button> : <>

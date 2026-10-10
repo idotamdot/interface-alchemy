@@ -142,7 +142,7 @@ export function MainContent({ user, project }: MainContentProps) {
               <button aria-label="Continue to studio canvas" disabled={!homeOpen} onClick={() => setHomeOpen(false)} className="seer-nav-button"><ArrowRight aria-hidden="true" /></button>
             </nav>
             {settingsOpen && <section aria-label="Studio settings and profile" className="mb-4 rounded-2xl border border-white/30 bg-[#241109] p-5 text-lg"><p>{user ? user.email : "You can create, review and save to the studio testing portfolio without signing in."}</p><p>Use Pause motion above for a still background. Your device’s reduced-motion preference is also respected.</p><button onClick={() => setSettingsOpen(false)} className="mt-3 min-h-12 rounded-full border border-white/40 px-5">Close settings</button></section>}
-            <section hidden={!homeOpen} aria-label="Studio home" className="seer-home relative min-h-0 flex-1 overflow-y-auto rounded-3xl p-5 sm:p-10">
+            <section hidden={!homeOpen} aria-label="Studio home" className="seer-home seer-atelier-home relative min-h-0 flex-1 overflow-y-auto rounded-3xl p-5 sm:p-10">
               <div className="seer-amber-glow" aria-hidden="true" />
               <svg className="seer-lime-trace" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
                 <g fill="none" stroke="#d7f58b" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round">
@@ -151,10 +151,10 @@ export function MainContent({ user, project }: MainContentProps) {
                 </g>
               </svg>
               <div className="relative mx-auto max-w-6xl">
-                <p className="text-lg text-[#ffe4b2]">Your imagination, made visible</p>
-                <h2 className="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-6xl">What would you like<br />to explore?</h2>
-                <p className="mt-5 max-w-2xl text-lg leading-8 text-white/90">Create the appearance your wireframes will wear. Explore colors, typography, cards, effects and branding, with room for each choice.</p>
-                <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <p className="seer-atelier-eyebrow">SCREEN SEER STUDIO <span aria-hidden="true">✦</span> THE ART OF INTERFACES</p>
+                <h2 className="seer-atelier-home-heading mt-5">Make something<br /><em>unforgettable.</em></h2>
+                <p className="mt-6 max-w-2xl text-lg leading-8 text-[#c4c3d7]">A visual design atelier for the way your application feels. Explore light, shape, typography, color and motion—then turn your chosen direction into a signature interface.</p>
+                <div className="seer-atelier-home-grid mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   <button className="seer-home-card seer-yellow" onClick={() => { setHomeOpen(false); setDesignRequest(value => value + 1); }}><Sparkles aria-hidden="true" /><span className="text-3xl font-semibold">Design directions</span><span>Describe your visual style or let the Seer surprise you.</span><span className="mt-auto font-semibold">Explore →</span></button>
                   <button className="seer-home-card seer-lime" onClick={() => { setHomeOpen(false); setDesignRequest(value => value + 1); }}><ScanSearch aria-hidden="true" /><span className="text-3xl font-semibold">Color spiral</span><span>Choose a direction, then explore harmonious palettes and finishes.</span><span className="mt-auto font-semibold">Start with a direction →</span></button>
                   <button className="seer-home-card seer-clear" onClick={() => { setHomeOpen(false); setMobilePanel("stage"); setActiveView("preview"); }}><Eye aria-hidden="true" /><span className="text-3xl font-semibold">Studio canvas</span><span>Review the live interface and its code.</span><span className="mt-auto font-semibold">Open canvas →</span></button>
