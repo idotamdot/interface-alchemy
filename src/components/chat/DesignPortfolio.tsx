@@ -30,7 +30,7 @@ export function DesignPortfolio({ result, onChoose }: { result?: SeerResult; onC
   const save = async () => {
     if (!result) return;
     setBusy(true); setMessage("");
-    try { await request({ action: "save", result }); setMessage("Saved privately to your portfolio."); }
+    try { await request({ action: "save", result }); setMessage("Saved to your studio portfolio."); }
     catch (error) { setMessage(error instanceof Error ? error.message : "Could not save design."); }
     finally { setBusy(false); }
   };
@@ -40,7 +40,7 @@ export function DesignPortfolio({ result, onChoose }: { result?: SeerResult; onC
       await request({ action, id: entry.id, ...(action === "donate" ? { consent: consent[entry.id] === true } : {}) });
       setEntries(current => current.map(item => item.id === entry.id ? { ...item, visibility: action === "donate" ? "community" : "private" } : item));
       setConsent(current => ({ ...current, [entry.id]: false }));
-      setMessage(action === "donate" ? "Donated to the community. Your private copy is retained." : "Removed from community browsing. Existing copies may still be used.");
+      setMessage(action === "donate" ? "Donated to the community. Your saved copy is retained." : "Removed from community browsing. Existing copies may still be used.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not update sharing."); }
     finally { setBusy(false); }
   };
@@ -49,6 +49,7 @@ export function DesignPortfolio({ result, onChoose }: { result?: SeerResult; onC
       {result ? <><button type="button" className={button} disabled={busy} onClick={save}>Save to portfolio</button></> : <><button type="button" className={button} disabled={busy} onClick={() => load("private")}>My portfolio</button><button type="button" className={button} disabled={busy} onClick={() => load("community")}>Community portfolio</button></>}
       {mode !== "closed" && <button type="button" className={button} onClick={() => setMode("closed")}>Close portfolio</button>}
     </div>
+    <p>Testing portfolio · saved in the shared studio collection.</p>
     <p role="status">{busy ? "Opening your collection…" : message}</p>
     {mode === "private" && !busy && !message && entries.length === 0 && <p>Your portfolio is empty. Save a Seer direction to keep it for later.</p>}
     {mode === "community" && !busy && community.length === 0 && <p>No donated directions yet.</p>}
@@ -56,7 +57,7 @@ export function DesignPortfolio({ result, onChoose }: { result?: SeerResult; onC
       <h4 className="text-lg font-semibold">{entry.result.final.name}</h4><p>{entry.result.final.direction}</p>
       <div className="mt-2 flex flex-wrap gap-2"><button type="button" className={button} disabled={busy} onClick={() => onChoose(entry.result)}>Use direction</button></div>
       {entry.visibility === "community" ? <button type="button" className={`${button} mt-2`} disabled={busy} onClick={() => share(entry, "withdraw")}>Withdraw donation</button> : <>
-        <label className="mt-3 flex min-h-11 items-start gap-3"><input type="checkbox" className="mt-1 h-5 w-5 shrink-0" checked={consent[entry.id] === true} onChange={event => setConsent(current => ({ ...current, [entry.id]: event.target.checked }))} />I reviewed the direction above and have permission to share it and allow anyone to reuse and adapt it. Only the direction and palette become public; my brief and AI review stay private.</label>
+        <label className="mt-3 flex min-h-11 items-start gap-3"><input type="checkbox" className="mt-1 h-5 w-5 shrink-0" checked={consent[entry.id] === true} onChange={event => setConsent(current => ({ ...current, [entry.id]: event.target.checked }))} />I reviewed the direction above and have permission to share it and allow anyone to reuse and adapt it. Only the direction and palette become public; the AI review stays out of the community collection.</label>
         <button type="button" className={`${button} mt-2`} disabled={busy || !consent[entry.id]} onClick={() => share(entry, "donate")}>Donate to community</button>
       </>}
     </article>)}

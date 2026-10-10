@@ -1,4 +1,5 @@
 "use client";
+import { useStudioAutosave } from "@/lib/use-studio-autosave";
 import { useEffect, useRef, useState } from "react";
 import { BRAND_LAYOUTS, BUILDER_ORIGIN, parseBrandPackage, renderBrandAsset, type BrandPackage } from "@/lib/brand-package";
 import type { BrandImage } from "@/lib/branding-contract";
@@ -7,6 +8,7 @@ export function useBrandKit() {
   const [name,setName]=useState(""); const [tagline,setTagline]=useState("");
   const [kit,setKit]=useState<BrandPackage|null>(null); const [acceptedKit,setAcceptedKit]=useState<BrandPackage|null>(null);
   const [busy,setBusy]=useState(false); const [error,setError]=useState("");
+  const saveMessage=useStudioAutosave("brand-kit",{name,tagline,kit,acceptedKit},value=>{setName(value.name);setTagline(value.tagline);setKit(value.kit);setAcceptedKit(value.acceptedKit);});
   const request=useRef<AbortController|null>(null);
   useEffect(()=>()=>request.current?.abort(),[]);
   const generate=async(source:BrandImage,alt:string)=>{
@@ -15,10 +17,11 @@ export function useBrandKit() {
     catch(cause){if(!controller.signal.aborted)setError(cause instanceof Error?cause.message:"The previous kit is intact. Try again.");}
     finally{if(!controller.signal.aborted)setBusy(false);}
   };
-  return {name,setName,tagline,setTagline,kit,acceptedKit,busy,error,generate,accept:()=>{if(kit)setAcceptedKit(parseBrandPackage({...kit,acceptedAt:new Date().toISOString()}));}};
+  return {saveMessage,name,setName,tagline,setTagline,kit,acceptedKit,busy,error,generate,restore:(value:BrandPackage)=>{ const parsed=parseBrandPackage(value);setKit(parsed);setAcceptedKit(parsed);setName(parsed.branding.name);setTagline(parsed.branding.tagline); },accept:()=>{if(kit)setAcceptedKit(parseBrandPackage({...kit,acceptedAt:new Date().toISOString()}));}};
 }
 export function BrandKitReview({ source, alt, state }: { source:BrandImage;alt:string;state:ReturnType<typeof useBrandKit> }) {
   const [handoff,setHandoff]=useState("");
+  const [saved,setSaved]=useState("");
   const cleanup=useRef<(()=>void)|null>(null);
   useEffect(()=>()=>cleanup.current?.(),[]);
   const send=()=>{
@@ -37,7 +40,7 @@ export function BrandKitReview({ source, alt, state }: { source:BrandImage;alt:s
     setHandoff("Opening Website Builder and waiting for its receipt…");timeout=setTimeout(()=>{stop();setHandoff("Website Builder did not confirm receipt. Your kit is intact; return here and try again.");},30000);cleanup.current=stop;
   };
   const matching=state.kit?.branding.source.id===source.id;
-  return <section className="mt-8 space-y-6" aria-label="Brand kit">
+  return <section className="mt-8 space-y-6" aria-label="Brand kit"><p role="status">{state.saveMessage}</p>
     <form onSubmit={event=>{event.preventDefault();void state.generate(source,alt);}} className="seer-home-card seer-pink">
       <h3 className="text-3xl font-semibold">Build a brand around this artwork.</h3><p>Your image inspires the colors, typography, brand voice and coordinated asset layouts.</p>
       <label className="w-full">Brand name<input required maxLength={60} value={state.name} onChange={event=>state.setName(event.target.value)} className={`${control} mt-2 w-full`} /></label>
@@ -51,6 +54,6 @@ export function BrandKitReview({ source, alt, state }: { source:BrandImage;alt:s
       <div className="grid gap-6 sm:grid-cols-2">{BRAND_LAYOUTS.map(asset=><article key={asset.role} className="seer-home-card seer-clear"><h4 className="text-2xl font-semibold">{asset.label}</h4><img src={renderBrandAsset(state.kit!,asset.role)} alt={`${state.kit!.branding.name} ${asset.label} layout`} className="max-h-80 w-full rounded-xl object-contain" /><p>{asset.width} × {asset.height}. {asset.role==="favicon"?"Check this small-size preview carefully; detailed artwork may need a simpler symbol.":"Coordinated from your accepted artwork."}</p>{asset.role==="favicon"&&<img src={renderBrandAsset(state.kit!,asset.role)} alt="Favicon at actual size" width={32} height={32}/>}</article>)}</div>
       <section className="seer-home-card seer-clear"><h4 className="text-2xl font-semibold">Usage guide</h4><ul className="list-disc space-y-3 pl-5">{state.kit.branding.guidelines.map((rule,index)=><li key={index}>{rule}</li>)}</ul><button type="button" disabled={!matching} onClick={state.accept} className={control}>Accept kit into build package</button></section>
     </>}
-    {state.acceptedKit&&<section className="seer-home-card seer-lime" aria-label="Accepted build package"><h3 className="text-3xl font-semibold">Build package: {state.acceptedKit.branding.name}</h3><p>Contains the approved artwork, {state.acceptedKit.branding.assets.length} asset layouts, checked color tokens, typography and usage guide. This accepted snapshot stays intact while you explore other artwork.</p><button type="button" onClick={send} className={control}>Send package to Website Builder</button><p role="status">{handoff}</p><p>Kept in these open tabs for now. Reloading clears the session package.</p></section>}
+    {state.acceptedKit&&<section className="seer-home-card seer-lime" aria-label="Accepted build package"><h3 className="text-3xl font-semibold">Build package: {state.acceptedKit.branding.name}</h3><p>Contains the approved artwork, {state.acceptedKit.branding.assets.length} asset layouts, checked color tokens, typography and usage guide. This accepted snapshot stays intact while you explore other artwork.</p><button type="button" onClick={async()=>{try{setSaved("Saving your kit…");const response=await fetch("/api/portfolio",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"save-kit",kit:state.acceptedKit})});const data=await response.json();if(!response.ok)throw Error(data.error||"The kit could not be saved.");setSaved("Brand kit saved to your studio portfolio. No sign-in needed.");}catch(cause){setSaved(cause instanceof Error?cause.message:"The kit could not be saved. Your current kit is intact.");}}} className={control}>Save kit to portfolio</button><p role="status">{saved}</p><button type="button" onClick={send} className={control}>Send package to Website Builder</button><p role="status">{handoff}</p><p>Kept in these open tabs for now. Reloading clears the session package.</p></section>}
   </section>;
 }

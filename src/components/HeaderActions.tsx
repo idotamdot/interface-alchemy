@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, FolderOpen, LogOut, Plus, Sparkles } from "lucide-react";
-import { AuthDialog } from "@/components/auth/AuthDialog";
+import { ChevronDown, FolderOpen, LogOut, Plus } from "lucide-react";
 import { signOut } from "@/actions";
 import { getProjects } from "@/actions/get-projects";
 import { createProject } from "@/actions/create-project";
@@ -39,7 +38,6 @@ interface Project {
 
 export function HeaderActions({ user, projectId }: HeaderActionsProps) {
   const router = useRouter();
-  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -82,14 +80,7 @@ export function HeaderActions({ user, projectId }: HeaderActionsProps) {
     return (
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm text-white/90">Studio open · no sign-in needed</span>
-        <Button
-          className="h-9 rounded-full border border-white/15 bg-[linear-gradient(110deg,rgba(124,58,237,.88),rgba(255,91,157,.78),rgba(255,133,55,.72))] px-4 text-hot-white shadow-[0_0_26px_rgba(255,196,48,0.22)] hover:brightness-110"
-          onClick={() => setAuthDialogOpen(true)}
-        >
-          <Sparkles className="h-4 w-4" />
-          Sign in to save
-        </Button>
-        <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
+
       </div>
     );
   }

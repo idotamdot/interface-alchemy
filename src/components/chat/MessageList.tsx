@@ -14,19 +14,19 @@ interface MessageListProps {
 const STARTER_PROMPTS = [
   {
     label: "Luminous",
-    text: "Create a luminous biotech dashboard with calm precision",
+    text: "Preview a luminous style with cool teal, clear glass cards and calm, readable typography",
   },
   {
     label: "Ceremonial",
-    text: "Design an occult editorial archive with ceremonial motion",
+    text: "Preview an editorial style with warm parchment, serif headings and gentle fades",
   },
   {
     label: "Tactile",
-    text: "Build a playful learning app that feels tactile and alive",
+    text: "Preview a playful style with rounded cards, warm pink and orange, and tactile buttons",
   },
   {
     label: "Cinematic",
-    text: "Shape a cinematic booking interface with dramatic restraint",
+    text: "Preview a cinematic style with deep charcoal, gold accents and bold readable headings",
   },
 ] as const;
 
@@ -55,11 +55,11 @@ export function MessageList({
           Turn atmosphere into an interface.
         </h2>
         <p className="mt-3 max-w-[30rem] text-pretty text-sm leading-6 text-white/80">
-          Describe the purpose, the mood, the energy, the material. Screen Seer Studio will turn that intent into a live visual language.
+          This is your blank style studio. Describe colors, type, cards and effects to create the appearance your wireframes will use.
         </p>
 
         <div className="mt-5 flex flex-wrap justify-center gap-2">
-          {["purpose", "atmosphere", "material", "motion"].map((item) => (
+          {["colors", "typography", "cards", "motion"].map((item) => (
             <span
               key={item}
               className="alchemy-rune rounded-full px-2.5 py-1 font-mono text-sm uppercase tracking-[0.2em] text-white/80"

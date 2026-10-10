@@ -5,6 +5,8 @@ import { useChat } from "@/lib/contexts/chat-context";
 import type { Message } from "ai";
 import type { ChangeEvent, FormEvent, ReactNode } from "react";
 
+vi.mock("@/lib/use-studio-autosave",()=>({useStudioAutosave:()=> "Saved to admin workspace."}));
+
 vi.mock("@/lib/contexts/chat-context", () => ({
   useChat: vi.fn(),
 }));
@@ -71,7 +73,7 @@ test("renders the Conductor with message history and intent input", () => {
   render(<ChatInterface />);
 
   expect(screen.getByText("The Conductor")).toBeDefined();
-  expect(screen.getByText("What are we creating?")).toBeDefined();
+  expect(screen.getByText("What should your screens look like?")).toBeDefined();
   expect(screen.getByText("Intent online")).toBeDefined();
   expect(screen.getByTestId("message-list")).toBeDefined();
   expect(screen.getByTestId("message-input")).toBeDefined();
@@ -105,7 +107,7 @@ test("shows the submitted synthesis state and disables input", () => {
 
   render(<ChatInterface />);
 
-  expect(screen.getByText("Interpreting product intent")).toBeDefined();
+  expect(screen.getByText("Reading your visual direction")).toBeDefined();
   expect(screen.getByRole("textbox")).toHaveProperty("disabled", true);
   expect(screen.getByRole("button", { name: "Generate" })).toHaveProperty(
     "disabled",
@@ -152,7 +154,7 @@ test("the Seer reviews options before changing a draft and preserves the brief w
   mockedUseChat.mockReturnValue({ ...baseChatState, input: "A multilingual shop", setInput });
   render(<ChatInterface />);
   fireEvent.click(screen.getByRole("button", { name: "Open design workspace" }));
-  fireEvent.click(screen.getByRole("button", { name: "Let the Seer choose" }));
+  fireEvent.click(screen.getByRole("button", { name: "Design my idea" }));
   await waitFor(() => expect(screen.getByRole("button", { name: "Use Sunlit" })).toBeDefined());
   expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ brief: "A multilingual shop", count: 3 });
   expect(setInput).not.toHaveBeenCalled();
@@ -177,7 +179,7 @@ test("a failed Seer review keeps the draft and offers recovery", async () => {
   mockedUseChat.mockReturnValue({ ...baseChatState, input: "My draft", setInput });
   render(<ChatInterface />);
   fireEvent.click(screen.getByRole("button", { name: "Open design workspace" }));
-  fireEvent.click(screen.getByRole("button", { name: "Let the Seer choose" }));
+  fireEvent.click(screen.getByRole("button", { name: "Design my idea" }));
   await waitFor(() => expect(screen.getByRole("alert").textContent).toContain("Try again"));
   expect(setInput).not.toHaveBeenCalled();
   vi.unstubAllGlobals();

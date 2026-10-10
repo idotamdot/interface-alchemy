@@ -1,4 +1,5 @@
 "use client";
+import { useStudioAutosave } from "@/lib/use-studio-autosave";
 
 import React, {
   createContext,
@@ -54,6 +55,8 @@ export function FileSystemProvider({
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger((prev) => prev + 1);
   }, []);
+
+  useStudioAutosave("canvas-files",{files:fileSystem.serialize()},value=>{fileSystem.deserializeFromNodes(value.files);triggerRefresh();});
 
   useEffect(() => {
     if (!selectedFile) {
@@ -244,3 +247,4 @@ export function useFileSystem() {
   }
   return context;
 }
+

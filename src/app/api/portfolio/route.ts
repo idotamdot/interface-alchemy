@@ -1,52 +1,47 @@
 import { createHash } from "node:crypto";
 import { prisma } from "@/lib/prisma";
-import { getCurrentAppUser } from "@/lib/current-user";
 import { portfolioMutationSchema } from "@/lib/portfolio-contract";
-import { directionSchema, seerResultSchema } from "@/lib/seer-contract";
+import { seerResultSchema } from "@/lib/seer-contract";
+import { parseBrandPackage } from "@/lib/brand-package";
 import { rateLimit } from "@/lib/rate-limit";
 export const dynamic = "force-dynamic";
 const headers = { "Cache-Control": "no-store" };
+// Explicit prelaunch mode; disable this collection before enabling account portfolios.
+function disabled() { return process.env.STUDIO_TEST_MODE === "false"; }
 export async function GET(req: Request) {
+  if (disabled()) return Response.json({ error: "The testing collection is closed." }, { status: 503, headers });
   try {
-    if (new URL(req.url).searchParams.get("collection") === "community") {
-      const entries = await prisma.portfolioDesign.findMany({ where: { visibility: "community" }, orderBy: { donatedAt: "desc" }, take: 60, select: { id: true, result: true, donatedAt: true } });
-      // Only publish the selected visual direction. Never publish identities, briefs or deliberation.
-      return Response.json({ entries: entries.flatMap(entry => {
-        const parsed = seerResultSchema.safeParse(entry.result);
-        return parsed.success ? [{ id: entry.id, final: { name: parsed.data.final.name, direction: parsed.data.final.direction, palette: parsed.data.final.palette, rationale: "Community-donated visual direction available for reuse." }, donatedAt: entry.donatedAt }] : [];
-      }) }, { headers });
-    }
-    const user = await getCurrentAppUser();
-    if (!user) return Response.json({ error: "Sign in to open your private portfolio." }, { status: 401, headers });
-    const entries = await prisma.portfolioDesign.findMany({ where: { userId: user.id }, orderBy: { updatedAt: "desc" }, take: 100, select: { id: true, result: true, visibility: true, createdAt: true } });
-    return Response.json({ entries }, { headers });
-  } catch { return Response.json({ error: "The portfolio could not load. Try again." }, { status: 503, headers }); }
+    const url = new URL(req.url), kits = url.searchParams.get("kind") === "brand-kit", community = url.searchParams.get("collection") === "community";
+    const entries = await prisma.studioTestPortfolio.findMany({ where: { kind: kits ? "brand-kit" : "direction", ...(community ? { visibility: "community" } : {}) }, orderBy: { updatedAt: "desc" }, take: kits ? 10 : 100 });
+    if (kits) return Response.json({ kits: entries.flatMap(entry => { try { return [parseBrandPackage(entry.data)]; } catch { return []; } }) }, { headers });
+    if (community) return Response.json({ entries: entries.flatMap(entry => { const parsed = seerResultSchema.safeParse(entry.data); return parsed.success ? [{ id: entry.id, final: { ...parsed.data.final, rationale: "Community-donated visual direction available for reuse." }, donatedAt: entry.donatedAt }] : []; }) }, { headers });
+    return Response.json({ entries: entries.flatMap(entry => { const parsed = seerResultSchema.safeParse(entry.data); return parsed.success ? [{ id: entry.id, result: parsed.data, visibility: entry.visibility === "community" ? "community" : "private", createdAt: entry.createdAt }] : []; }) }, { headers });
+  } catch { return Response.json({ error: "The studio portfolio could not be opened. Your saved designs are intact." }, { status: 503, headers }); }
 }
 export async function POST(req: Request) {
+  if (disabled()) return Response.json({ error: "The testing collection is closed." }, { status: 503, headers });
+  const origin = req.headers.get("origin");
+  if (origin && origin !== new URL(req.url).origin) return Response.json({ error: "Open the studio to update this collection." }, { status: 403, headers });
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
+  if (!rateLimit(`test-portfolio:${ip}`,20).ok) return Response.json({ error: "Please wait a minute and try again." }, { status: 429, headers });
+  let body;
+  try { if (Number(req.headers.get("content-length")) > 2000000) throw Error(); const raw = await req.text(); if (new TextEncoder().encode(raw).length > 2000000) throw Error(); body = JSON.parse(raw); }
+  catch { return Response.json({ error: "The portfolio request is incomplete." }, { status: 400, headers }); }
   try {
-    const origin = req.headers.get("origin");
-    if (origin && origin !== new URL(req.url).origin) return Response.json({ error: "Invalid origin" }, { status: 403, headers });
-    const user = await getCurrentAppUser();
-    if (!user) return Response.json({ error: "Sign in to save or donate designs." }, { status: 401, headers });
-    if (!rateLimit(`portfolio:${user.id}`, 20).ok) return Response.json({ error: "Please wait before updating your portfolio again." }, { status: 429, headers });
-    const raw = await req.text();
-    if (new TextEncoder().encode(raw).length > 35000) return Response.json({ error: "Design is too large." }, { status: 413, headers });
-    const parsed = portfolioMutationSchema.safeParse(JSON.parse(raw));
-    if (!parsed.success) return Response.json({ error: "A valid design and explicit sharing consent are required." }, { status: 400, headers });
-    const body = parsed.data;
-    if (body.action === "save") {
-      const fingerprint = createHash("sha256").update(JSON.stringify(body.result.final)).digest("hex");
-      const entry = await prisma.portfolioDesign.upsert({ where: { userId_fingerprint: { userId: user.id, fingerprint } }, create: { userId: user.id, fingerprint, result: body.result }, update: {}, select: { id: true, result: true, visibility: true, createdAt: true } });
-      return Response.json({ entry }, { headers });
+    if (body?.action === "save-kit" || body?.action === "save") {
+      const kit = body.action === "save-kit";
+      const data = kit ? parseBrandPackage(body.kit) : portfolioMutationSchema.parse(body).action === "save" ? seerResultSchema.parse(body.result) : null;
+      if (!data) throw Error();
+      const fingerprint = createHash("sha256").update(JSON.stringify({ kind: kit ? "brand-kit" : "direction", value: kit ? { ...(data as ReturnType<typeof parseBrandPackage>), acceptedAt: undefined } : body.result.final })).digest("hex");
+      const entry = await prisma.studioTestPortfolio.upsert({ where: { fingerprint }, create: { kind: kit ? "brand-kit" : "direction", fingerprint, data }, update: { data }, select: { id: true } });
+      return Response.json({ saved: true, id: entry.id }, { headers });
     }
-    const entry = await prisma.portfolioDesign.findFirst({ where: { id: body.id, userId: user.id } });
-    if (!entry) return Response.json({ error: "Design not found in your portfolio." }, { status: 404, headers });
-    if (body.action === "donate") {
-      const stored = seerResultSchema.parse(entry.result);
-      directionSchema.parse(stored.final);
-    }
-    // Owner check is part of the update, not just an earlier read.
-    await prisma.portfolioDesign.updateMany({ where: { id: body.id, userId: user.id }, data: body.action === "donate" ? { visibility: "community", donatedAt: new Date() } : { visibility: "private", donatedAt: null } });
-    return Response.json({ success: true }, { headers });
-  } catch { return Response.json({ error: "The portfolio could not save this change. Your existing designs are intact." }, { status: 503, headers }); }
+    const action = portfolioMutationSchema.parse(body);
+    if (action.action === "save") throw Error();
+    const entry = await prisma.studioTestPortfolio.findFirst({ where: { id: action.id, kind: "direction" } });
+    if (!entry) return Response.json({ error: "This direction is not in the studio portfolio." }, { status: 404, headers });
+    seerResultSchema.parse(entry.data);
+    await prisma.studioTestPortfolio.update({ where: { id: entry.id }, data: action.action === "donate" ? { visibility: "community", donatedAt: new Date() } : { visibility: "studio", donatedAt: null } });
+    return Response.json({ saved: true }, { headers });
+  } catch { return Response.json({ error: "The portfolio could not save this change. Your current collection is intact. Review your choice and try again." }, { status: 400, headers }); }
 }

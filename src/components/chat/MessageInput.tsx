@@ -56,10 +56,10 @@ export function MessageInput({
           <div className="relative mb-2.5 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 font-mono text-sm font-semibold uppercase tracking-[0.24em] text-amber-100/60">
               <Sparkles className="h-3 w-3 text-pink-200/80" aria-hidden="true" />
-              Add to the potion
+              Your screen style
             </div>
             <span className="text-sm text-white/80">
-              Enter to synthesize · Shift + Enter for depth
+              Enter to preview · Shift + Enter for a new line
             </span>
           </div>
 
@@ -67,14 +67,14 @@ export function MessageInput({
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Tell me the feeling first. Then the purpose, material, motion, references, or anything you want the interface to become..."
+            placeholder="Describe colors, fonts, cards, textures and effects for your wireframes. For example: amber glow, pink glass cards and bold readable type."
             disabled={isLoading}
             className="relative min-h-[106px] max-h-[240px] w-full resize-none bg-transparent pr-14 text-base leading-7 text-white outline-none placeholder:text-white/80 disabled:cursor-wait disabled:opacity-60"
             rows={4}
             aria-label="Describe the visual direction to synthesize"
           />
 
-          <div className="relative mt-3 flex min-h-7 flex-wrap items-center gap-2 pr-14">
+          <div className="relative mt-3 flex min-h-7 flex-wrap items-center gap-2">
             {detectedAtmosphere.length > 0 ? (
               detectedAtmosphere.map((word) => (
                 <span
@@ -86,7 +86,7 @@ export function MessageInput({
               ))
             ) : (
               <span className="text-sm text-white/80">
-                Mood words become part of the visual DNA.
+                Describe the look your wireframes will use.
               </span>
             )}
           </div>
@@ -94,10 +94,11 @@ export function MessageInput({
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="group absolute bottom-4 right-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[conic-gradient(from_220deg,#ffcf3d,#ff70aa,#ff963b,#e4ff68,#ffcf3d)] text-white shadow-[0_0_30px_rgba(255,196,48,0.24),0_8px_28px_rgba(0,0,0,0.3)] transition duration-300 hover:scale-105 hover:rotate-3 hover:shadow-[0_0_42px_rgba(255,133,55,0.25)] disabled:cursor-not-allowed disabled:opacity-20 disabled:hover:scale-100 disabled:hover:rotate-0"
-            aria-label={isLoading ? "Interface synthesis in progress" : "Synthesize interface"}
+            className="group relative mt-4 flex min-h-12 w-full items-center justify-center gap-2 px-5 rounded-full border border-white/15 bg-[conic-gradient(from_220deg,#ffcf3d,#ff70aa,#ff963b,#e4ff68,#ffcf3d)] text-[#241109] font-semibold text-lg shadow-[0_0_30px_rgba(255,196,48,0.24),0_8px_28px_rgba(0,0,0,0.3)] transition duration-300 hover:scale-105 hover:rotate-3 hover:shadow-[0_0_42px_rgba(255,133,55,0.25)] disabled:cursor-not-allowed disabled:opacity-20 disabled:hover:scale-100 disabled:hover:rotate-0"
+            aria-label={isLoading ? "Interface synthesis in progress" : "Preview my style"}
           >
-            <ArrowUpRight className="h-5 w-5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            {isLoading ? "Creating preview…" : "Preview my style"}
+            <ArrowUpRight aria-hidden="true" className="h-5 w-5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 "use client";
+import { useStudioAutosave } from "@/lib/use-studio-autosave";
 
 import {
   createContext,
@@ -43,6 +44,7 @@ export function ChatProvider({
     handleSubmit,
     status,
     append,
+    setMessages,
   } = useAIChat({
     api: "/api/chat",
     initialMessages,
@@ -54,6 +56,9 @@ export function ChatProvider({
       handleToolCall(toolCall);
     },
   });
+
+  useStudioAutosave("chat-draft",{input},value=>setInput(value.input));
+  useStudioAutosave("conversation",{messages},value=>setMessages(value.messages as Message[]));
 
   // Track anonymous work
   useEffect(() => {

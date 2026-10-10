@@ -52,3 +52,23 @@ model PortfolioDesign {
   @@index([userId, updatedAt])
   @@index([visibility, donatedAt])
 }
+
+// Shared prelaunch collection. No account is required for studio testing.
+model StudioTestPortfolio {
+  id          String   @id @default(cuid())
+  kind        String
+  fingerprint String   @unique
+  data        Json
+  visibility  String   @default("studio")
+  donatedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([kind, updatedAt])
+  @@index([visibility, donatedAt])
+}
+
+model StudioWorkspacePart {
+  id        String   @id
+  state     Json
+  updatedAt DateTime @updatedAt
+}

@@ -1,4 +1,5 @@
 "use client";
+import { useStudioAutosave } from "@/lib/use-studio-autosave";
 
 import { useEffect, useRef, useState } from "react";
 import { Activity, Orbit, Sparkles, Shuffle } from "lucide-react";
@@ -27,6 +28,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
   const [seerCount, setSeerCount] = useState(3);
   const [seerSource, setSeerSource] = useState("description");
   const [selectedDirection, setSelectedDirection] = useState("");
+  const saveMessage = useStudioAutosave("design-directions", {seerResults,seerCount,seerSource,selectedDirection,explorations}, value => {setSeerResults(value.seerResults);setSeerCount(value.seerCount);setSeerSource(value.seerSource);setSelectedDirection(value.selectedDirection);setExplorations(value.explorations);});
   const seerDraft = useRef({ base: "", output: "" });
   const seerRequest = useRef<AbortController | null>(null);
   useEffect(() => () => seerRequest.current?.abort(), []);
@@ -80,7 +82,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
             <Orbit className="h-3.5 w-3.5 text-amber-300" />
             The Conductor
           </div>
-          <p className="mt-1 text-sm text-white/70">What are we creating?</p>
+          <p className="mt-1 text-sm text-white/70">What should your screens look like?</p>
         </div>
         <div className="flex items-center gap-2 rounded-full border border-orange-300/15 bg-orange-300/5 px-3 py-1.5 text-sm font-medium uppercase tracking-[0.16em] text-orange-100/70">
           <Activity className="h-3 w-3" />
@@ -98,7 +100,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
             <div>
               <p className="text-sm font-medium text-white">
                 {isSubmitted
-                  ? "Interpreting product intent"
+                  ? "Reading your visual direction"
                   : "Composing the interface"}
               </p>
               <p className="text-xs text-white/80">
@@ -128,30 +130,32 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
           <DialogTrigger asChild><button type="button" onClick={() => setWorkspace("directions")} className="m-4 min-h-12 rounded-full border border-lime-200/40 bg-lime-200/10 px-5 text-lg text-lime-100">Open design workspace</button></DialogTrigger>
           <DialogContent data-motion={motionPaused ? "paused" : "playing"} showCloseButton={false} className="inset-0 top-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-y-auto rounded-none border-0 bg-[#241109] p-5 text-white sm:max-w-none sm:p-10">
             <header className="mx-auto mb-8 flex w-full max-w-6xl flex-wrap items-center justify-between gap-4">
-              <div><DialogTitle className="text-3xl sm:text-5xl">{workspace === "directions" ? "Find your design direction" : "Explore your color story"}</DialogTitle><DialogDescription className="mt-3 text-lg text-white/90">Take your time. Your draft and design directions stay intact when you return to the studio.</DialogDescription></div>
+              <div><DialogTitle className="text-3xl sm:text-5xl">{workspace === "directions" ? "Find your design direction" : "Explore your color story"}</DialogTitle><DialogDescription className="mt-3 text-lg text-white/90">Create a visual style for your wireframes: colors, type, cards, textures and effects. Your draft stays here when you return.</DialogDescription></div>
               <DialogClose className="min-h-12 rounded-full border border-white/40 px-5 text-lg">Back to studio</DialogClose>
             </header>
             <div className="mx-auto w-full max-w-6xl">
             {workspace !== "directions" && <button type="button" onClick={() => setWorkspace("directions")} className="mb-6 min-h-12 rounded-full border border-white/40 px-5 text-lg">Back to directions</button>}
             <div hidden={workspace !== "directions"} aria-busy={seerLoading}>
-              <label className="mb-6 block text-lg">Describe what you want to create<textarea value={input} onChange={handleInputChange} className="mt-3 min-h-36 w-full rounded-2xl border border-white/30 bg-white/10 p-5 text-lg leading-8 text-white" /></label>
+              <p id="style-brief-help" className="mb-5 max-w-3xl text-lg leading-8 text-white/90">Start with a blank style canvas. Describe the appearance you want your wireframes to use. Try “dark chocolate background, amber glow, pink glass cards, bold readable type and gentle fades.”</p>
+              <label className="mb-6 block text-lg font-semibold">Describe your visual style<textarea aria-describedby="style-brief-help" placeholder="Colors, mood, fonts, card shapes, textures and motion…" value={input} onChange={handleInputChange} className="mt-3 min-h-36 w-full rounded-2xl border border-white/30 bg-white/10 p-5 text-lg leading-8 text-white" /></label>
           <div className="flex flex-wrap items-center gap-2">
-            <label className="text-sm text-white/90">Inspiration
+            <label className="text-sm text-white/90">Starting point
               <select aria-label="Seer inspiration" value={seerSource} onChange={event => setSeerSource(event.target.value)} disabled={seerLoading || isSynthesizing} className="ml-2 min-h-11 rounded-lg bg-[#241109] px-2 text-white">
-                <option value="description">My description</option><option value="pick">Seer pick</option>
+                <option value="description">Use my style description</option><option value="pick">Surprise me with a Seer pick</option>
               </select>
             </label>
-            <label className="text-sm text-white/90">Options
+            <label className="text-sm text-white/90">Designs to compare
               <select aria-label="Number of directions" value={seerCount} onChange={event => setSeerCount(Number(event.target.value))} disabled={seerLoading || isSynthesizing} className="ml-2 min-h-11 rounded-lg bg-[#241109] px-2 text-white">
                 {[1, 2, 3].map(count => <option key={count} value={count}>{count}</option>)}
               </select>
             </label>
-            <button type="button" onClick={askSeer} disabled={seerLoading || isSynthesizing} className="flex min-h-11 items-center gap-2 rounded-full border border-lime-200/40 bg-lime-200/10 px-4 text-base text-lime-100 transition hover:bg-lime-200/20 disabled:opacity-50">
-              <Shuffle className="h-4 w-4" aria-hidden="true" /> {seerLoading ? "The Seer is considering…" : "Let the Seer choose"}
+            <button type="button" onClick={askSeer} disabled={seerLoading || isSynthesizing || (seerSource === "description" && !input.trim())} className="flex min-h-12 items-center gap-2 rounded-full border border-lime-200/40 bg-lime-200 px-6 text-lg font-semibold text-[#241109] transition hover:bg-lime-100 disabled:opacity-50">
+              <Shuffle className="h-4 w-4" aria-hidden="true" /> {seerLoading ? "Creating your style options…" : seerSource === "description" ? "Design my idea" : "Let the Seer surprise me"}
             </button>
           </div>
-          <p role="status" className="mt-2 text-sm leading-6 text-white/90">{seerLoading ? "Proposing ideas, gathering a second opinion, and checking final palette contrast. Your draft stays intact." : selectedDirection ? `${selectedDirection} added to your draft. Review before synthesizing.` : "Two AIs propose, critique, and decide. Choose a direction to add to your draft."}</p>
+          <p role="status" className="mt-2 text-sm leading-6 text-white/90">{seerLoading ? "Proposing ideas, gathering a second opinion, and checking final palette contrast. Your draft stays intact." : selectedDirection ? `${selectedDirection} selected. Return to the studio to preview this style.` : "Create up to three visual styles, then choose your favorite. Two AIs review each idea and check palette contrast."}</p>
           {seerError && <p role="alert" className="mt-2 text-base text-pink-100">{seerError}</p>}
+          <p role="status" className="mt-3 text-base text-white/90">{saveMessage}</p>
           <DesignPortfolio onChoose={chooseDirection} />
           <div className="grid gap-6 lg:grid-cols-2">
             {seerResults.map((result, index) => <article key={index} className="mt-3 rounded-3xl border border-white/30 bg-[linear-gradient(135deg,rgba(255,196,48,.14),rgba(255,91,157,.12),rgba(255,133,55,.14))] p-6 shadow-xl backdrop-blur-xl">
