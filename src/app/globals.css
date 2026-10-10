@@ -585,3 +585,9 @@ button.seer-home-card:hover { background: linear-gradient(140deg, rgba(var(--gla
 @media(max-width:580px){.seer-compare-picker{grid-template-columns:1fr;}}
 
 .seer-material-card{min-width:0;border:1px solid rgba(207,196,248,.22);border-radius:1.3rem;background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.012)),rgba(15,16,31,.8);padding:1.25rem;color:#f5f3ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+
+.seer-stage-toggle{min-height:44px;border:1px solid rgba(213,199,255,.3);border-radius:999px;padding:.55rem 1rem;text-transform:capitalize;color:#ddd8ef;background:rgba(255,255,255,.035)}
+.seer-stage-toggle[aria-pressed=true]{color:#0e1021;background:#ddd3ff;border-color:#ddd3ff;font-weight:700}
+.seer-stage-canvas{overflow-x:auto;border-radius:1.6rem;border:1px solid rgba(207,196,248,.22);padding:clamp(.75rem,3vw,2rem);background:radial-gradient(circle at 50% 0,rgba(162,133,255,.14),transparent 55%),#090c17}
+.seer-stage-viewport{margin-inline:auto;width:100%;transition:max-width 200ms ease}
+@media(prefers-reduced-motion:reduce){.seer-stage-viewport{transition:none}}
