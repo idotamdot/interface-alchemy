@@ -17,6 +17,7 @@ import { useChat } from "@/lib/contexts/chat-context";
 export function ChatInterface({ openRequest = 0, motionPaused = false }: { openRequest?: number; motionPaused?: boolean }) {
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [workspace, setWorkspace] = useState<"directions" | number>("directions");
+  const [atelierRoom, setAtelierRoom] = useState<"brief" | "salon">("brief");
   const [explorations, setExplorations] = useState<Record<number, { seed: number; position: number }>>({});
   useEffect(() => { if (openRequest > 0) { setWorkspace("directions"); setWorkspaceOpen(true); } }, [openRequest]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -49,6 +50,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
       if (!response.ok) throw new Error(typeof data.error === "string" ? data.error : "The Seer could not finish. Your draft is intact.");
       const parsed = z.object({ results: z.array(seerResultSchema).min(1).max(3) }).parse(data);
       setSeerResults(parsed.results);
+      setAtelierRoom("salon");
       setExplorations({});
       setSelectedDirection("");
     } catch (error) {
@@ -130,7 +132,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
 
       <div className="flex-shrink-0">
         <Dialog open={workspaceOpen} onOpenChange={setWorkspaceOpen}>
-          <DialogTrigger asChild><button type="button" onClick={() => setWorkspace("directions")} className="m-4 min-h-12 rounded-full border border-lime-200/40 bg-lime-200/10 px-5 text-lg text-lime-100">Open design workspace</button></DialogTrigger>
+          <DialogTrigger asChild><button type="button" onClick={() => { setWorkspace("directions"); setAtelierRoom("brief"); }} className="m-4 min-h-12 rounded-full border border-lime-200/40 bg-lime-200/10 px-5 text-lg text-lime-100">Open design workspace</button></DialogTrigger>
           <DialogContent data-motion={motionPaused ? "paused" : "playing"} showCloseButton={false} className="seer-atelier inset-0 top-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-y-auto rounded-none border-0 p-4 text-white sm:max-w-none sm:p-10">
             <header className="seer-atelier-header mx-auto mb-8 flex w-full max-w-6xl flex-wrap items-start justify-between gap-5">
               <div className="max-w-3xl"><p className="seer-atelier-eyebrow"><Sparkles size={15} aria-hidden="true" /> INTERFACE ALCHEMY / THE VISUAL ATELIER</p><DialogTitle className="seer-atelier-title">{workspace === "directions" ? "Screen Seer Studio" : "Chromatic explorations"}</DialogTitle><DialogDescription className="seer-atelier-subtitle">An extraordinary interface begins with a point of view. Shape its atmosphere, discover visual directions, and choose the one worth bringing to life.</DialogDescription><div className="seer-atelier-steps" aria-label="Design process"><span>01 / Envision</span><span>02 / Explore</span><span>03 / Curate</span></div></div>
@@ -138,7 +140,13 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
             </header>
             <div className="mx-auto w-full max-w-6xl">
             {workspace !== "directions" && <button type="button" onClick={() => setWorkspace("directions")} className="seer-atelier-exit mb-6 min-h-12 rounded-full border border-white/40 px-5 text-lg">← Back to directions</button>}
+            <nav aria-label="Atelier rooms" className="seer-room-nav">
+              <button type="button" aria-current={atelierRoom === "brief" ? "step" : undefined} onClick={() => setAtelierRoom("brief")}>01 <span>Creative brief</span></button>
+              <button type="button" aria-current={atelierRoom === "salon" ? "step" : undefined} disabled={!seerResults.length} onClick={() => setAtelierRoom("salon")}>02 <span>The salon</span></button>
+              <span className="seer-room-nav-note">Compose → Review → Select</span>
+            </nav>
             <div hidden={workspace !== "directions"} aria-busy={seerLoading} className="seer-atelier-body">
+            <div hidden={atelierRoom !== "brief"}>
               <div className="seer-atelier-intro"><span className="seer-atelier-num">01</span><div><h3>Art-direct your vision.</h3><p id="style-brief-help">This is a blank canvas for the <em>appearance</em> of your app—not its features. Describe the colors, typography, materials, lighting and motion you want to feel.</p></div></div>
               <label className="seer-atelier-field mb-6 block text-lg font-semibold"><span className="seer-atelier-field-label">YOUR CREATIVE DIRECTION</span><textarea aria-describedby="style-brief-help" placeholder="Imagine smoked-glass panels floating in midnight blue, silver typography, a violet halo and cinematic transitions…" value={styleBrief} onChange={event => {briefSeeded.current=true;setStyleBrief(event.target.value);}} className="seer-atelier-textarea mt-3 min-h-44 w-full rounded-2xl border p-5 text-lg leading-8 text-white" /></label>
           <div className="seer-atelier-controls flex flex-wrap items-center gap-4">
@@ -159,6 +167,13 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
           <p role="status" className="mt-2 text-sm leading-6 text-white/90">{seerLoading ? "Proposing ideas, gathering a second opinion, and checking final palette contrast. Your draft stays intact." : selectedDirection ? `${selectedDirection} selected. Your original description stays unchanged.` : "Create up to three visual styles, then choose your favorite. Two AIs review each idea and check palette contrast."}</p>
           {seerError && <p role="alert" className="mt-2 text-base text-pink-100">{seerError}</p>}
           <p role="status" className="mt-3 text-base text-white/90">{saveMessage}</p>
+          </div>
+          <div hidden={atelierRoom !== "salon"}>
+            <div className="seer-atelier-intro"><span className="seer-atelier-num">02</span><div><h3>The design salon.</h3><p>Consider each visual direction on a composed sample screen. Compare the aesthetic, review the palette, and select a direction to develop further.</p></div></div>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
+              <p className="text-base text-[#c7c4da]">{seerResults.length ? `${seerResults.length} directions ready for your review` : "Generate directions in the creative brief first."}</p>
+              <button type="button" onClick={() => setAtelierRoom("brief")} className="seer-atelier-exit min-h-11 rounded-full border px-4">← Revise brief</button>
+            </div>
           <DesignPortfolio onChoose={chooseDirection} />
           <div className="grid gap-6 2xl:grid-cols-2">
             {seerResults.map((result, index) => <article key={index} className="seer-atelier-result mt-3 rounded-3xl border p-6 shadow-xl backdrop-blur-xl">
@@ -173,6 +188,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
               <button type="button" onClick={() => setWorkspace(index)} className="seer-atelier-exit mt-3 min-h-12 rounded-full border px-5 text-lg">Explore color spiral ↗</button>
               <DesignPortfolio result={result} onChoose={chooseDirection} />
             </article>)}
+          </div>
           </div>
             </div>
             {seerResults.map((result, index) => <div key={index} hidden={workspace !== index}><ColorSpiral expanded exploration={explorations[index]} onExplore={value => setExplorations(current => ({ ...current, [index]: value }))} result={result} onChoose={chooseDirection} /></div>)}

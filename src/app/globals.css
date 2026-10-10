@@ -566,3 +566,12 @@ button.seer-home-card:hover { background: linear-gradient(140deg, rgba(var(--gla
 .seer-atelier-portfolio-card {background:linear-gradient(145deg,rgba(145,122,235,.15),rgba(19,21,41,.82));border-color:rgba(205,195,255,.26);}
 @media(max-width:640px){.seer-atelier-home-grid .seer-home-card{min-height:12rem}.seer-atelier-home-heading{font-size:clamp(2.8rem,12vw,4rem)}}
 @media(prefers-reduced-motion:reduce){.seer-atelier-home-grid button.seer-home-card:hover{transform:none}}
+
+/* The Atelier rooms: genuine navigation between the existing creation and review flows. */
+.seer-room-nav {display:flex;align-items:center;flex-wrap:wrap;gap:.65rem;margin:0 0 1rem;padding:.5rem 0;}
+.seer-room-nav button {display:flex;align-items:center;gap:.8rem;border:1px solid rgba(190,182,230,.23);border-radius:999px;padding:.8rem 1.3rem;color:#bfbad9;background:rgba(255,255,255,.03);font-family:ui-monospace,monospace;font-size:.9rem;transition:border-color .2s,background .2s;}
+.seer-room-nav button span {font-family:inherit;letter-spacing:.02em;}
+.seer-room-nav button[aria-current="step"] {background:linear-gradient(115deg,rgba(186,165,255,.22),rgba(123,194,214,.1));border-color:rgba(213,196,255,.75);color:#fff;}
+.seer-room-nav button:disabled {cursor:not-allowed;opacity:.45;}
+.seer-room-nav-note {margin-left:auto;color:#aaa8c0;font-size:.8rem;letter-spacing:.04em;}
+@media(max-width:680px){.seer-room-nav-note{width:100%;margin-left:0}.seer-room-nav button{flex:1;justify-content:center;min-width:8rem;}}
