@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/resizable";
 import { FileSystemProvider } from "@/lib/contexts/file-system-context";
 import { ChatProvider } from "@/lib/contexts/chat-context";
+import { BrandingStudio } from "@/components/chat/BrandingStudio";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { FileTree } from "@/components/editor/FileTree";
 import { CodeEditor } from "@/components/editor/CodeEditor";
@@ -70,6 +71,7 @@ const stageModes: Array<{
 ];
 
 export function MainContent({ user, project }: MainContentProps) {
+  const [brandingOpen, setBrandingOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(!project);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [designRequest, setDesignRequest] = useState(0);
@@ -131,6 +133,7 @@ export function MainContent({ user, project }: MainContentProps) {
               </div>
             </header>
 
+            <BrandingStudio open={brandingOpen} onOpenChange={setBrandingOpen} motionPaused={motionPaused} />
             <nav aria-label="Studio navigation" className="mb-4 flex shrink-0 items-center justify-center gap-3">
               <button aria-label="Back to studio home" disabled={homeOpen} onClick={() => setHomeOpen(true)} className="seer-nav-button"><ArrowLeft aria-hidden="true" /></button>
               <button aria-label="Profile" onClick={() => setSettingsOpen(value => !value)} className="seer-nav-button"><UserRound aria-hidden="true" /></button>
@@ -155,7 +158,7 @@ export function MainContent({ user, project }: MainContentProps) {
                   <button className="seer-home-card seer-yellow" onClick={() => { setHomeOpen(false); setDesignRequest(value => value + 1); }}><Sparkles aria-hidden="true" /><span className="text-3xl font-semibold">Design directions</span><span>Describe your idea or let the Seer choose.</span><span className="mt-auto font-semibold">Explore →</span></button>
                   <button className="seer-home-card seer-lime" onClick={() => { setHomeOpen(false); setDesignRequest(value => value + 1); }}><ScanSearch aria-hidden="true" /><span className="text-3xl font-semibold">Color spiral</span><span>Choose a direction, then explore harmonious palettes and finishes.</span><span className="mt-auto font-semibold">Start with a direction →</span></button>
                   <button className="seer-home-card seer-clear" onClick={() => { setHomeOpen(false); setMobilePanel("stage"); setActiveView("preview"); }}><Eye aria-hidden="true" /><span className="text-3xl font-semibold">Studio canvas</span><span>Review the live interface and its code.</span><span className="mt-auto font-semibold">Open canvas →</span></button>
-                  <div className="seer-home-card seer-pink"><WandSparkles aria-hidden="true" /><span className="text-3xl font-semibold">Branding & artwork</span><span>Artwork and icons shaped by your description.</span><span className="mt-auto font-semibold">Coming next</span></div>
+                  <button className="seer-home-card seer-pink" onClick={() => setBrandingOpen(true)}><WandSparkles aria-hidden="true" /><span className="text-3xl font-semibold">Branding & artwork</span><span>Artwork and icons shaped by your description.</span><span className="mt-auto font-semibold">Create artwork →</span></button>
                   <div className="seer-home-card seer-orange"><Move3d aria-hidden="true" /><span className="text-3xl font-semibold">Motion & transitions</span><span>Give your screens a rhythm of their own.</span><span className="mt-auto font-semibold">Coming next</span></div>
                 </div>
               </div>
