@@ -17,7 +17,8 @@ import { useChat } from "@/lib/contexts/chat-context";
 export function ChatInterface({ openRequest = 0, motionPaused = false }: { openRequest?: number; motionPaused?: boolean }) {
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [workspace, setWorkspace] = useState<"directions" | number>("directions");
-  const [atelierRoom, setAtelierRoom] = useState<"brief" | "salon">("brief");
+  const [atelierRoom, setAtelierRoom] = useState<"brief" | "salon" | "compare">("brief");
+  const [compareIndices, setCompareIndices] = useState<[number, number]>([0, 1]);
   const [explorations, setExplorations] = useState<Record<number, { seed: number; position: number }>>({});
   useEffect(() => { if (openRequest > 0) { setWorkspace("directions"); setWorkspaceOpen(true); } }, [openRequest]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -51,6 +52,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
       const parsed = z.object({ results: z.array(seerResultSchema).min(1).max(3) }).parse(data);
       setSeerResults(parsed.results);
       setAtelierRoom("salon");
+      setCompareIndices([0, Math.min(1, parsed.results.length - 1)]);
       setExplorations({});
       setSelectedDirection("");
     } catch (error) {
@@ -143,6 +145,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
             <nav aria-label="Atelier rooms" className="seer-room-nav">
               <button type="button" aria-current={atelierRoom === "brief" ? "step" : undefined} onClick={() => setAtelierRoom("brief")}>01 <span>Creative brief</span></button>
               <button type="button" aria-current={atelierRoom === "salon" ? "step" : undefined} disabled={!seerResults.length} onClick={() => setAtelierRoom("salon")}>02 <span>The salon</span></button>
+              <button type="button" aria-current={atelierRoom === "compare" ? "step" : undefined} disabled={seerResults.length < 2} onClick={() => setAtelierRoom("compare")}>03 <span>Compare</span></button>
               <span className="seer-room-nav-note">Compose → Review → Select</span>
             </nav>
             <div hidden={workspace !== "directions"} aria-busy={seerLoading} className="seer-atelier-body">
@@ -189,6 +192,32 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
               <DesignPortfolio result={result} onChoose={chooseDirection} />
             </article>)}
           </div>
+          </div>
+          <div hidden={atelierRoom !== "compare"}>
+            <div className="seer-atelier-intro"><span className="seer-atelier-num">03</span><div><h3>The comparison gallery.</h3><p>Examine two actual generated directions side by side. Their palettes and sample compositions remain independent so you can decide which deserves your signature.</p></div></div>
+            <div className="seer-compare-picker">
+              {([0, 1] as const).map(slot => <label key={slot}>Direction {slot === 0 ? "A" : "B"}
+                <select className="seer-atelier-select block mt-2 w-full min-h-12" value={compareIndices[slot]} onChange={event => setCompareIndices(current => slot === 0 ? [Number(event.target.value),current[1]] : [current[0],Number(event.target.value)])}>
+                  {seerResults.map((item,index)=><option value={index} key={index}>{item.final.name}</option>)}
+                </select>
+              </label>)}
+            </div>
+            {compareIndices[0] === compareIndices[1] && <p role="status" className="mt-3 text-[#ded0ff]">Both panels show the same direction. Choose a different option to compare.</p>}
+            <div className="seer-compare-grid">
+              {compareIndices.map((index,slot) => {
+                const result = seerResults[index];
+                if (!result) return null;
+                return <section className="seer-atelier-result rounded-3xl p-5" key={slot} aria-label={`Direction ${slot === 0 ? "A" : "B"}: ${result.final.name}`}>
+                  <p className="seer-atelier-eyebrow">DIRECTION {slot === 0 ? "A" : "B"}</p>
+                  <h4 className="text-2xl font-semibold mt-3">{result.final.name}</h4>
+                  <p className="text-base text-[#d3d0e4] mt-2">{result.final.direction}</p>
+                  <div className="flex gap-2 mt-4" aria-label="Palette colors">{Object.entries(result.final.palette).map(([name,color]) => <div key={name} title={`${name}: ${color}`} aria-label={`${name}: ${color}`} className="h-9 flex-1 rounded-md border border-white/25" style={{backgroundColor:color}} />)}</div>
+                  <ScreenStylePreview direction={result.final}/>
+                  <p className="text-sm leading-6 text-[#cbc8dd]">{checkPalette(result.final.palette).map(check => `${check.pair}: ${check.ratio.toFixed(2)}:1`).join(" · ")}</p>
+                  <button type="button" onClick={() => chooseDirection(result)} aria-pressed={selectedDirection === result.final.name} className="seer-atelier-select-button mt-4 min-h-12 w-full rounded-full px-5 font-semibold">{selectedDirection === result.final.name ? "Selected direction" : "Select this direction"}</button>
+                </section>;
+              })}
+            </div>
           </div>
             </div>
             {seerResults.map((result, index) => <div key={index} hidden={workspace !== index}><ColorSpiral expanded exploration={explorations[index]} onExplore={value => setExplorations(current => ({ ...current, [index]: value }))} result={result} onChoose={chooseDirection} /></div>)}
