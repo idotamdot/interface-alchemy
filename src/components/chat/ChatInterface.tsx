@@ -6,12 +6,16 @@ import { MessageList } from "./MessageList";
 import { ColorSpiral } from "./ColorSpiral";
 import { DesignPortfolio } from "./DesignPortfolio";
 import { MessageInput } from "./MessageInput";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { z } from "zod";
 import { checkPalette, directionPrompt, seerResultSchema, type SeerResult } from "@/lib/seer-contract";
 import { useChat } from "@/lib/contexts/chat-context";
 
 export function ChatInterface() {
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [workspace, setWorkspace] = useState<"directions" | number>("directions");
+  const [explorations, setExplorations] = useState<Record<number, { seed: number; position: number }>>({});
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { messages, input, setInput, handleInputChange, handleSubmit, status, append } =
     useChat();
@@ -38,6 +42,7 @@ export function ChatInterface() {
       if (!response.ok) throw new Error(typeof data.error === "string" ? data.error : "The Seer could not finish. Your draft is intact.");
       const parsed = z.object({ results: z.array(seerResultSchema).min(1).max(3) }).parse(data);
       setSeerResults(parsed.results);
+      setExplorations({});
       setSelectedDirection("");
     } catch (error) {
       if (!controller.signal.aborted) setSeerError(error instanceof Error ? error.message : "The Seer could not finish. Your draft is intact.");
@@ -118,7 +123,17 @@ export function ChatInterface() {
       </ScrollArea>
 
       <div className="flex-shrink-0">
-        <div className="max-h-[35dvh] overflow-y-auto border-t border-white/10 px-4 py-3" aria-busy={seerLoading}>
+        <Dialog open={workspaceOpen} onOpenChange={setWorkspaceOpen}>
+          <DialogTrigger asChild><button type="button" onClick={() => setWorkspace("directions")} className="m-4 min-h-12 rounded-full border border-lime-200/40 bg-lime-200/10 px-5 text-lg text-lime-100">Open design workspace</button></DialogTrigger>
+          <DialogContent showCloseButton={false} className="inset-0 top-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-y-auto rounded-none border-0 bg-[#241109] p-5 text-white sm:max-w-none sm:p-10">
+            <header className="mx-auto mb-8 flex w-full max-w-6xl flex-wrap items-center justify-between gap-4">
+              <div><DialogTitle className="text-3xl sm:text-5xl">{workspace === "directions" ? "Find your design direction" : "Explore your color story"}</DialogTitle><DialogDescription className="mt-3 text-lg text-white/90">Take your time. Your draft and design directions stay intact when you return to the studio.</DialogDescription></div>
+              <DialogClose className="min-h-12 rounded-full border border-white/40 px-5 text-lg">Back to studio</DialogClose>
+            </header>
+            <div className="mx-auto w-full max-w-6xl">
+            {workspace !== "directions" && <button type="button" onClick={() => setWorkspace("directions")} className="mb-6 min-h-12 rounded-full border border-white/40 px-5 text-lg">Back to directions</button>}
+            <div hidden={workspace !== "directions"} aria-busy={seerLoading}>
+              <label className="mb-6 block text-lg">Describe what you want to create<textarea value={input} onChange={handleInputChange} className="mt-3 min-h-36 w-full rounded-2xl border border-white/30 bg-white/10 p-5 text-lg leading-8 text-white" /></label>
           <div className="flex flex-wrap items-center gap-2">
             <label className="text-sm text-white/90">Inspiration
               <select aria-label="Seer inspiration" value={seerSource} onChange={event => setSeerSource(event.target.value)} disabled={seerLoading || isSynthesizing} className="ml-2 min-h-11 rounded-lg bg-[#241109] px-2 text-white">
@@ -137,8 +152,8 @@ export function ChatInterface() {
           <p role="status" className="mt-2 text-sm leading-6 text-white/90">{seerLoading ? "Proposing ideas, gathering a second opinion, and checking final palette contrast. Your draft stays intact." : selectedDirection ? `${selectedDirection} added to your draft. Review before synthesizing.` : "Two AIs propose, critique, and decide. Choose a direction to add to your draft."}</p>
           {seerError && <p role="alert" className="mt-2 text-base text-pink-100">{seerError}</p>}
           <DesignPortfolio onChoose={chooseDirection} />
-          <div className="space-y-3">
-            {seerResults.map((result, index) => <article key={index} className="mt-3 rounded-xl border border-white/25 p-3">
+          <div className="grid gap-6 lg:grid-cols-2">
+            {seerResults.map((result, index) => <article key={index} className="mt-3 rounded-3xl border border-white/30 bg-[linear-gradient(135deg,rgba(255,196,48,.14),rgba(255,91,157,.12),rgba(255,133,55,.14))] p-6 shadow-xl backdrop-blur-xl">
               <h3 className="text-lg font-semibold text-white">{index + 1}. {result.final.name}</h3>
               <p className="mt-2 text-base leading-6 text-white/90">{result.final.direction}</p>
               <div className="mt-3 rounded-lg border-2 p-3" style={{ backgroundColor: result.final.palette.background, color: result.final.palette.text, borderColor: result.final.palette.border }}>
@@ -150,11 +165,15 @@ export function ChatInterface() {
               {result.contrastCorrections?.length ? <p className="mt-2 text-sm text-lime-100">Contrast checks corrected {result.contrastCorrections.join(", ")} while preserving the chosen background and accent.</p> : null}
               <details className="mt-2 text-base leading-6 text-white/90"><summary className="min-h-11 cursor-pointer py-2">Idea, opinion & final choice</summary><p>OpenAI’s idea: {result.proposal.name}. {result.proposal.rationale}</p><p className="mt-2">Gemini’s opinion: {result.critique}</p><p className="mt-2">OpenAI’s final choice: {result.final.rationale}</p><p className="mt-2">These checks cover the solid palette pairs. The generated screen still needs a rendered accessibility review.</p></details>
               <button type="button" onClick={() => chooseDirection(result)} disabled={seerLoading || isSynthesizing} aria-pressed={selectedDirection === result.final.name} className="mt-2 min-h-11 rounded-full border border-lime-200/40 bg-lime-200/10 px-4 text-base text-lime-100 disabled:opacity-50">Use {result.final.name}</button>
-              <ColorSpiral result={result} onChoose={chooseDirection} />
+              <button type="button" onClick={() => setWorkspace(index)} className="mt-3 min-h-12 rounded-full border border-pink-200/40 px-5 text-lg">Explore color spiral</button>
               <DesignPortfolio result={result} onChoose={chooseDirection} />
             </article>)}
           </div>
-        </div>
+            </div>
+            {seerResults.map((result, index) => <div key={index} hidden={workspace !== index}><ColorSpiral expanded exploration={explorations[index]} onExplore={value => setExplorations(current => ({ ...current, [index]: value }))} result={result} onChoose={chooseDirection} /></div>)}
+            </div>
+          </DialogContent>
+        </Dialog>
         <MessageInput
           input={input}
           handleInputChange={handleInputChange}

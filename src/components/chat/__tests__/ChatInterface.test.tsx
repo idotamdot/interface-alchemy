@@ -151,6 +151,7 @@ test("the Seer reviews options before changing a draft and preserves the brief w
   const setInput = vi.fn();
   mockedUseChat.mockReturnValue({ ...baseChatState, input: "A multilingual shop", setInput });
   render(<ChatInterface />);
+  fireEvent.click(screen.getByRole("button", { name: "Open design workspace" }));
   fireEvent.click(screen.getByRole("button", { name: "Let the Seer choose" }));
   await waitFor(() => expect(screen.getByRole("button", { name: "Use Sunlit" })).toBeDefined());
   expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ brief: "A multilingual shop", count: 3 });
@@ -159,6 +160,14 @@ test("the Seer reviews options before changing a draft and preserves the brief w
   fireEvent.click(screen.getByRole("button", { name: "Use Sunlit" }));
   expect(setInput.mock.calls[0][0]).toContain("A multilingual shop");
   expect(setInput.mock.calls[0][0]).toContain("4.5:1");
+  fireEvent.click(screen.getByRole("button", { name: "Explore color spiral" }));
+  expect(screen.getByRole("heading", { name: "Explore your color story" })).toBeDefined();
+  fireEvent.change(screen.getByRole("slider"), { target: { value: "3" } });
+  fireEvent.click(screen.getByRole("button", { name: "Back to directions" }));
+  fireEvent.click(screen.getByRole("button", { name: "Back to studio" }));
+  fireEvent.click(screen.getByRole("button", { name: "Open design workspace" }));
+  fireEvent.click(screen.getByRole("button", { name: "Explore color spiral" }));
+  expect((screen.getByRole("slider") as HTMLInputElement).value).toBe("3");
   vi.unstubAllGlobals();
 });
 
@@ -167,8 +176,19 @@ test("a failed Seer review keeps the draft and offers recovery", async () => {
   const setInput = vi.fn();
   mockedUseChat.mockReturnValue({ ...baseChatState, input: "My draft", setInput });
   render(<ChatInterface />);
+  fireEvent.click(screen.getByRole("button", { name: "Open design workspace" }));
   fireEvent.click(screen.getByRole("button", { name: "Let the Seer choose" }));
   await waitFor(() => expect(screen.getByRole("alert").textContent).toContain("Try again"));
   expect(setInput).not.toHaveBeenCalled();
   vi.unstubAllGlobals();
+});
+
+ test("full-page workspace returns to studio and preserves its direction controls", () => {
+  render(<ChatInterface />);
+  fireEvent.click(screen.getByRole("button", { name: "Open design workspace" }));
+  fireEvent.change(screen.getByLabelText("Number of directions"), { target: { value: "2" } });
+  fireEvent.click(screen.getByRole("button", { name: "Back to studio" }));
+  expect(screen.queryByRole("dialog")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Open design workspace" }));
+  expect((screen.getByLabelText("Number of directions") as HTMLSelectElement).value).toBe("2");
 });
