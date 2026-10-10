@@ -80,16 +80,17 @@ export function HeaderActions({ user, projectId }: HeaderActionsProps) {
 
   if (!user) {
     return (
-      <>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm text-white/90">Studio open · no sign-in needed</span>
         <Button
           className="h-9 rounded-full border border-white/15 bg-[linear-gradient(110deg,rgba(124,58,237,.88),rgba(255,91,157,.78),rgba(255,133,55,.72))] px-4 text-hot-white shadow-[0_0_26px_rgba(255,196,48,0.22)] hover:brightness-110"
           onClick={() => setAuthDialogOpen(true)}
         >
           <Sparkles className="h-4 w-4" />
-          Enter studio
+          Sign in to save
         </Button>
         <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
-      </>
+      </div>
     );
   }
 

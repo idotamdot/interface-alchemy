@@ -44,13 +44,9 @@ export function DesignPortfolio({ result, onChoose }: { result?: SeerResult; onC
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not update sharing."); }
     finally { setBusy(false); }
   };
-  const download = (entry: SeerResult) => {
-    const url = URL.createObjectURL(new Blob([JSON.stringify({ format: "screen-seer-direction/v1", result: entry }, null, 2)], { type: "application/json" }));
-    const link = document.createElement("a"); link.href = url; link.download = "screen-seer-direction.json"; link.click(); URL.revokeObjectURL(url);
-  };
   return <section aria-label="Design portfolio" className="mt-3 space-y-2 text-base text-white/90">
     <div className="flex flex-wrap gap-2">
-      {result ? <><button type="button" className={button} disabled={busy} onClick={save}>Save to portfolio</button><button type="button" className={button} onClick={() => download(result)}>Download direction</button></> : <><button type="button" className={button} disabled={busy} onClick={() => load("private")}>My portfolio</button><button type="button" className={button} disabled={busy} onClick={() => load("community")}>Community portfolio</button></>}
+      {result ? <><button type="button" className={button} disabled={busy} onClick={save}>Save to portfolio</button></> : <><button type="button" className={button} disabled={busy} onClick={() => load("private")}>My portfolio</button><button type="button" className={button} disabled={busy} onClick={() => load("community")}>Community portfolio</button></>}
       {mode !== "closed" && <button type="button" className={button} onClick={() => setMode("closed")}>Close portfolio</button>}
     </div>
     <p role="status">{busy ? "Opening your collection…" : message}</p>
@@ -58,7 +54,7 @@ export function DesignPortfolio({ result, onChoose }: { result?: SeerResult; onC
     {mode === "community" && !busy && community.length === 0 && <p>No donated directions yet.</p>}
     {mode === "private" && entries.map(entry => <article key={entry.id} className="rounded-xl border border-white/25 p-3">
       <h4 className="text-lg font-semibold">{entry.result.final.name}</h4><p>{entry.result.final.direction}</p>
-      <div className="mt-2 flex flex-wrap gap-2"><button type="button" className={button} disabled={busy} onClick={() => onChoose(entry.result)}>Use direction</button><button type="button" className={button} onClick={() => download(entry.result)}>Download</button></div>
+      <div className="mt-2 flex flex-wrap gap-2"><button type="button" className={button} disabled={busy} onClick={() => onChoose(entry.result)}>Use direction</button></div>
       {entry.visibility === "community" ? <button type="button" className={`${button} mt-2`} disabled={busy} onClick={() => share(entry, "withdraw")}>Withdraw donation</button> : <>
         <label className="mt-3 flex min-h-11 items-start gap-3"><input type="checkbox" className="mt-1 h-5 w-5 shrink-0" checked={consent[entry.id] === true} onChange={event => setConsent(current => ({ ...current, [entry.id]: event.target.checked }))} />I reviewed the direction above and have permission to share it and allow anyone to reuse and adapt it. Only the direction and palette become public; my brief and AI review stay private.</label>
         <button type="button" className={`${button} mt-2`} disabled={busy || !consent[entry.id]} onClick={() => share(entry, "donate")}>Donate to community</button>
