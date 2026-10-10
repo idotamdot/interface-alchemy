@@ -1,3 +1,40 @@
+## Screen Seer Studio — Professional Visual Atelier (October 2026)
+
+**Interface Alchemy owns the application's visual identity, independently of UX Designer Studio's wireframes.** The Screen Seer Studio is an art-direction workspace—not a substitute for designing product behavior.
+
+### Atelier rooms
+
+| Room | Present source-level capability |
+| --- | --- |
+| **01 / Creative Brief** | Describe a desired visual appearance, choose inspiration and request up to three directions |
+| **02 / The Salon** | Review generated concepts, sample-screen previews, contrast checks, model critique, select and save directions |
+| **03 / Compare** | Review two generated directions side by side with their actual palettes and visual samples |
+| **04 / Materials** | Inspect a selected direction's six palette tokens, sample controls and measured solid-color contrast |
+| **05 / The Stage** | Switch between desktop, tablet and mobile widths and three **illustrative** landing/dashboard/form compositions |
+
+The Studio includes an existing color-spiral exploration and a consent-based design portfolio. The Atelier's look uses a restrained obsidian/pearl/violet/glacier visual language. Sample compositions are not imported UX wireframes; labels must not imply the underlying controls or workflows have been implemented.
+
+### Handoff to Website Builder
+
+1. Generate and **select** a visual direction in Screen Seer Studio.
+2. Use **Download visual style package**. This produces a JSON `screen-seer-visual/v1` export, validated against the `src/lib/visual-style-package.ts` schema, with the six contrast-checked color tokens and explicit **not verified** flags for rendered accessibility and implementation.
+3. In `idotamdot/website-builder`, open the visual-style JSON separately from the accepted UX package produced by `idotamdot/user-experience-designer-studio`.
+4. Builder can display the two together and save a combined review without rewriting their underlying source contracts.
+
+**Not yet implemented:** automated cross-app synchronization, actual imported UX wireframe styling in the Atelier Stage, a complete typography/spacing/motion token system, or finished Builder-generated functionality. Download-and-import is the current connection. Production deployment success is distinct from successful tests and end-to-end browser validation.
+
+**Contracts and source:** `src/lib/seer-contract.ts`, `src/lib/visual-style-package.ts`, `src/components/chat/ChatInterface.tsx`, `src/components/chat/MaterialsLibrary.tsx`, `src/components/chat/AtelierStage.tsx`, and `docs/SCREEN-SEER-ATELIER.md`.
+
+### Focused verification
+
+```bash
+pnpm typecheck
+pnpm test:run
+pnpm build
+```
+
+The integration tests and build checks should run on the actual commit being released. A Vercel READY status does not, by itself, prove that interactive export/import was tested.
+
 # UIGen
 
 AI-powered React component generator with live preview, persistent projects, and magic-link authentication.
