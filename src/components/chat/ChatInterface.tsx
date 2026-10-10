@@ -131,19 +131,19 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
       <div className="flex-shrink-0">
         <Dialog open={workspaceOpen} onOpenChange={setWorkspaceOpen}>
           <DialogTrigger asChild><button type="button" onClick={() => setWorkspace("directions")} className="m-4 min-h-12 rounded-full border border-lime-200/40 bg-lime-200/10 px-5 text-lg text-lime-100">Open design workspace</button></DialogTrigger>
-          <DialogContent data-motion={motionPaused ? "paused" : "playing"} showCloseButton={false} className="inset-0 top-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-y-auto rounded-none border-0 bg-[#241109] p-5 text-white sm:max-w-none sm:p-10">
-            <header className="mx-auto mb-8 flex w-full max-w-6xl flex-wrap items-center justify-between gap-4">
-              <div><DialogTitle className="text-3xl sm:text-5xl">{workspace === "directions" ? "Find your design direction" : "Explore your color story"}</DialogTitle><DialogDescription className="mt-3 text-lg text-white/90">Create a visual style for your wireframes: colors, type, cards, textures and effects. Your draft stays here when you return.</DialogDescription></div>
-              <DialogClose className="min-h-12 rounded-full border border-white/40 px-5 text-lg">Back to studio</DialogClose>
+          <DialogContent data-motion={motionPaused ? "paused" : "playing"} showCloseButton={false} className="seer-atelier inset-0 top-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-y-auto rounded-none border-0 p-4 text-white sm:max-w-none sm:p-10">
+            <header className="seer-atelier-header mx-auto mb-8 flex w-full max-w-6xl flex-wrap items-start justify-between gap-5">
+              <div className="max-w-3xl"><p className="seer-atelier-eyebrow"><Sparkles size={15} aria-hidden="true" /> INTERFACE ALCHEMY / THE VISUAL ATELIER</p><DialogTitle className="seer-atelier-title">{workspace === "directions" ? "Screen Seer Studio" : "Chromatic explorations"}</DialogTitle><DialogDescription className="seer-atelier-subtitle">An extraordinary interface begins with a point of view. Shape its atmosphere, discover visual directions, and choose the one worth bringing to life.</DialogDescription><div className="seer-atelier-steps" aria-label="Design process"><span>01 / Envision</span><span>02 / Explore</span><span>03 / Curate</span></div></div>
+              <DialogClose className="seer-atelier-exit min-h-12 rounded-full border border-white/40 px-5 text-base">✕ &nbsp; Close studio</DialogClose>
             </header>
             <div className="mx-auto w-full max-w-6xl">
-            {workspace !== "directions" && <button type="button" onClick={() => setWorkspace("directions")} className="mb-6 min-h-12 rounded-full border border-white/40 px-5 text-lg">Back to directions</button>}
-            <div hidden={workspace !== "directions"} aria-busy={seerLoading}>
-              <p id="style-brief-help" className="mb-5 max-w-3xl text-lg leading-8 text-white/90">Start with a blank style canvas. Describe the appearance you want your wireframes to use. Try “dark chocolate background, amber glow, pink glass cards, bold readable type and gentle fades.”</p>
-              <label className="mb-6 block text-lg font-semibold">Describe your visual style<textarea aria-describedby="style-brief-help" placeholder="Colors, mood, fonts, card shapes, textures and motion…" value={styleBrief} onChange={event => {briefSeeded.current=true;setStyleBrief(event.target.value);}} className="mt-3 min-h-36 w-full rounded-2xl border border-white/30 bg-white/10 p-5 text-lg leading-8 text-white" /></label>
-          <div className="flex flex-wrap items-center gap-2">
+            {workspace !== "directions" && <button type="button" onClick={() => setWorkspace("directions")} className="seer-atelier-exit mb-6 min-h-12 rounded-full border border-white/40 px-5 text-lg">← Back to directions</button>}
+            <div hidden={workspace !== "directions"} aria-busy={seerLoading} className="seer-atelier-body">
+              <div className="seer-atelier-intro"><span className="seer-atelier-num">01</span><div><h3>Art-direct your vision.</h3><p id="style-brief-help">This is a blank canvas for the <em>appearance</em> of your app—not its features. Describe the colors, typography, materials, lighting and motion you want to feel.</p></div></div>
+              <label className="seer-atelier-field mb-6 block text-lg font-semibold"><span className="seer-atelier-field-label">YOUR CREATIVE DIRECTION</span><textarea aria-describedby="style-brief-help" placeholder="Imagine smoked-glass panels floating in midnight blue, silver typography, a violet halo and cinematic transitions…" value={styleBrief} onChange={event => {briefSeeded.current=true;setStyleBrief(event.target.value);}} className="seer-atelier-textarea mt-3 min-h-44 w-full rounded-2xl border p-5 text-lg leading-8 text-white" /></label>
+          <div className="seer-atelier-controls flex flex-wrap items-center gap-4">
             <label className="text-sm text-white/90">Starting point
-              <select aria-label="Seer inspiration" value={seerSource} onChange={event => setSeerSource(event.target.value)} disabled={seerLoading || isSynthesizing} className="ml-2 min-h-11 rounded-lg bg-[#241109] px-2 text-white">
+              <select aria-label="Seer inspiration" value={seerSource} onChange={event => setSeerSource(event.target.value)} disabled={seerLoading || isSynthesizing} className="seer-atelier-select ml-2 min-h-11 rounded-lg px-3 text-white">
                 <option value="description">Use my style description</option><option value="pick">Surprise me with a Seer pick</option>
               </select>
             </label>
@@ -152,7 +152,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
                 {[1, 2, 3].map(count => <option key={count} value={count}>{count}</option>)}
               </select>
             </label>
-            <button type="button" onClick={askSeer} disabled={seerLoading || isSynthesizing || (seerSource === "description" && !styleBrief.trim())} className="flex min-h-12 items-center gap-2 rounded-full border border-lime-200/40 bg-lime-200 px-6 text-lg font-semibold text-[#241109] transition hover:bg-lime-100 disabled:opacity-50">
+            <button type="button" onClick={askSeer} disabled={seerLoading || isSynthesizing || (seerSource === "description" && !styleBrief.trim())} className="seer-atelier-create flex min-h-12 items-center gap-2 rounded-full px-7 text-lg font-semibold transition disabled:opacity-50">
               <Shuffle className="h-4 w-4" aria-hidden="true" /> {seerLoading ? "Creating your style options…" : seerSource === "description" ? "Design my idea" : "Let the Seer surprise me"}
             </button>
           </div>
@@ -161,16 +161,16 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
           <p role="status" className="mt-3 text-base text-white/90">{saveMessage}</p>
           <DesignPortfolio onChoose={chooseDirection} />
           <div className="grid gap-6 2xl:grid-cols-2">
-            {seerResults.map((result, index) => <article key={index} className="mt-3 rounded-3xl border border-white/30 bg-[linear-gradient(135deg,rgba(255,196,48,.14),rgba(255,91,157,.12),rgba(255,133,55,.14))] p-6 shadow-xl backdrop-blur-xl">
+            {seerResults.map((result, index) => <article key={index} className="seer-atelier-result mt-3 rounded-3xl border p-6 shadow-xl backdrop-blur-xl">
               <h3 className="text-lg font-semibold text-white">{index + 1}. {result.final.name}</h3>
               <details className="mt-3 text-base leading-7 text-white/90"><summary className="min-h-12 cursor-pointer py-3">About this style</summary><p>{result.final.direction}</p></details>
-<button type="button" onClick={() => chooseDirection(result)} disabled={seerLoading || isSynthesizing} aria-label={`Choose this style: ${result.final.name}`} aria-pressed={selectedDirection === result.final.name} className="mt-4 min-h-12 w-full rounded-full border-2 border-lime-200 bg-lime-200 px-5 text-lg font-semibold text-[#241109] disabled:opacity-50">{selectedDirection === result.final.name ? "Selected" : "Choose this style"}<span className="sr-only">: {result.final.name}</span></button>
+<button type="button" onClick={() => chooseDirection(result)} disabled={seerLoading || isSynthesizing} aria-label={`Choose this style: ${result.final.name}`} aria-pressed={selectedDirection === result.final.name} className="seer-atelier-select-button mt-4 min-h-12 w-full rounded-full px-5 text-lg font-semibold disabled:opacity-50">{selectedDirection === result.final.name ? "Selected" : "Choose this style"}<span className="sr-only">: {result.final.name}</span></button>
               <ScreenStylePreview direction={result.final} />
               <p className="mt-2 text-sm leading-6 text-white/90">{checkPalette(result.final.palette).map(check => `${check.pair}: ${check.ratio.toFixed(2)}:1`).join(" · ")}</p>
               {result.contrastCorrections?.length ? <p className="mt-2 text-sm text-lime-100">Contrast checks corrected {result.contrastCorrections.join(", ")} while preserving the chosen background and accent.</p> : null}
               <details className="mt-2 text-base leading-6 text-white/90"><summary className="min-h-11 cursor-pointer py-2">Idea, opinion & final choice</summary><p>OpenAI’s idea: {result.proposal.name}. {result.proposal.rationale}</p><p className="mt-2">Gemini’s opinion: {result.critique}</p><p className="mt-2">OpenAI’s final choice: {result.final.rationale}</p><p className="mt-2">These checks cover the solid palette pairs. The generated screen still needs a rendered accessibility review.</p></details>
               
-              <button type="button" onClick={() => setWorkspace(index)} className="mt-3 min-h-12 rounded-full border border-pink-200/40 px-5 text-lg">Explore color spiral</button>
+              <button type="button" onClick={() => setWorkspace(index)} className="seer-atelier-exit mt-3 min-h-12 rounded-full border px-5 text-lg">Explore color spiral ↗</button>
               <DesignPortfolio result={result} onChoose={chooseDirection} />
             </article>)}
           </div>

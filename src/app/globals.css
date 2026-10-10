@@ -512,3 +512,37 @@ button.seer-home-card:hover { background: linear-gradient(140deg, rgba(var(--gla
 @keyframes seer-rare-lime { 0%, 94%, 100% { opacity: 0; } 96%, 97% { opacity: .13; } }
 [data-motion="paused"] .seer-lime-trace { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .seer-lime-trace { display: none; animation: none; } }
+
+/* Screen Seer Studio: a deliberately separate, premium visual-design atelier. */
+.seer-atelier {
+  background: radial-gradient(ellipse at 76% -8%, rgba(142,101,255,.23), transparent 40%),
+    radial-gradient(ellipse at -6% 63%, rgba(51,191,204,.12), transparent 38%),
+    linear-gradient(145deg,#080b14 0%,#101122 45%,#080913 100%) !important;
+  color: #f4f3fb;
+}
+.seer-atelier::before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.2; background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px); background-size:72px 72px; mask-image:linear-gradient(to bottom,black,transparent 75%); }
+.seer-atelier-header { position:relative; padding:clamp(1.2rem,3vw,2.5rem) 0 2.3rem; border-bottom:1px solid rgba(205,208,241,.15); }
+.seer-atelier-eyebrow { display:flex; gap:.65rem; align-items:center; color:#b4b5f7; letter-spacing:.19em; font-size:.76rem; font-weight:700; }
+.seer-atelier-title { margin-top:1.2rem; font-family:Georgia,"Times New Roman",serif; font-weight:400; letter-spacing:-.057em; line-height:.99; font-size:clamp(3.5rem,8vw,7.8rem); background:linear-gradient(114deg,#fff 12%,#ced4f6 45%,#bcadff 75%,#e4e0ef); background-clip:text; color:transparent; }
+.seer-atelier-subtitle { max-width:45rem; margin-top:1.4rem; color:#c5c4d4; font-size:clamp(1rem,1.8vw,1.17rem); line-height:1.8; }
+.seer-atelier-steps { display:flex; flex-wrap:wrap; gap:.75rem 2rem; margin-top:1.7rem; font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:#aca6ce; }
+.seer-atelier-steps span:first-child {color:#e4e1ff;}
+.seer-atelier-exit { color:#eceafa; border-color:rgba(218,215,255,.27) !important; background:rgba(255,255,255,.055); backdrop-filter:blur(12px); transition:background .2s,border-color .2s; }
+.seer-atelier-exit:hover {background:rgba(189,174,255,.16);border-color:#a99bed !important;}
+.seer-atelier-body { position:relative; border:1px solid rgba(205,201,251,.18); border-radius:28px; padding:clamp(1.25rem,3.6vw,3rem); background:linear-gradient(135deg,rgba(255,255,255,.072),rgba(255,255,255,.014) 46%),rgba(12,14,28,.78); box-shadow:0 32px 90px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.14); }
+.seer-atelier-intro {display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:2rem;}
+.seer-atelier-intro h3 {font-family:Georgia,serif;font-size:clamp(1.75rem,3.6vw,3rem);letter-spacing:-.035em;color:#f3f0ff;}
+.seer-atelier-intro p {margin-top:.6rem;max-width:43rem;color:#b9bad0;line-height:1.8;font-size:1rem;}
+.seer-atelier-num {display:grid;place-items:center;min-width:3.1rem;height:3.1rem;border:1px solid rgba(188,173,255,.4);border-radius:50%;color:#cec5ff;font-family:monospace;font-size:.85rem;}
+.seer-atelier-field-label {font-size:.76rem;letter-spacing:.18em;color:#c4bffa;}
+.seer-atelier-textarea {display:block;background:rgba(4,6,17,.66) !important;border-color:rgba(183,182,224,.3) !important;box-shadow:inset 0 1px 20px rgba(0,0,0,.24);resize:vertical;}
+.seer-atelier-textarea:focus-visible,.seer-atelier-select:focus-visible {outline:2px solid #b5aaff;outline-offset:3px;}
+.seer-atelier-textarea::placeholder {color:#9d9bae;}
+.seer-atelier-controls {border-top:1px solid rgba(205,201,251,.13);padding-top:1.5rem;}
+.seer-atelier-select {border:1px solid rgba(196,185,239,.26);background:#1d1e33;color:#fff;}
+.seer-atelier-create,.seer-atelier-select-button {color:#101020;background:linear-gradient(110deg,#f2edff,#c5b9ff 55%,#9de0e3);box-shadow:0 6px 24px rgba(149,131,245,.2);}
+.seer-atelier-create:hover,.seer-atelier-select-button:hover {filter:brightness(1.07);transform:translateY(-1px);}
+.seer-atelier-result {background:linear-gradient(145deg,rgba(142,120,247,.16),rgba(27,29,49,.94) 36%,rgba(8,12,24,.95));border-color:rgba(192,179,255,.3);box-shadow:0 24px 55px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.12);}
+.seer-atelier button:focus-visible {outline:2px solid #dad0ff;outline-offset:3px;}
+@media(max-width:640px){.seer-atelier-header{padding-top:1rem}.seer-atelier-intro{gap:.85rem}.seer-atelier-num{min-width:2.4rem;height:2.4rem}.seer-atelier-steps{gap:.7rem 1rem}.seer-atelier-controls label{width:100%}.seer-atelier-select{display:block;margin:.5rem 0 0;width:100%}}
+@media(prefers-reduced-motion:reduce){.seer-atelier-create:hover,.seer-atelier-select-button:hover{transform:none}}
