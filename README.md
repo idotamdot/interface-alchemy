@@ -12,6 +12,8 @@
 | **04 / Materials** | Inspect a selected direction's six palette tokens, sample controls and measured solid-color contrast |
 | **05 / The Stage** | Switch between desktop, tablet and mobile widths and three **illustrative** landing/dashboard/form compositions |
 
+The selected direction is now passed to the main workspace Stage, where **Visual design proof** is distinct from the separate **Generated interface** code preview. After choosing a direction, the Materials room provides **View on Live Stage** to close the Atelier and reveal the selected design. With no selected design, the proof uses an explicitly labeled sample. The Stage still uses illustrative compositions, not imported UX wireframes.
+
 The Studio includes an existing color-spiral exploration and a consent-based design portfolio. The Atelier's look uses a restrained obsidian/pearl/violet/glacier visual language. Sample compositions are not imported UX wireframes; labels must not imply the underlying controls or workflows have been implemented.
 
 ### Handoff to Website Builder

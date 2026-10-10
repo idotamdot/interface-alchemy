@@ -165,7 +165,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false, onDirecti
               <button type="button" aria-current={atelierRoom === "compare" ? "step" : undefined} disabled={seerResults.length < 2} onClick={() => setAtelierRoom("compare")}>03 <span>Compare</span></button>
               <button type="button" aria-current={atelierRoom === "materials" ? "step" : undefined} disabled={!seerResults.some(item => item.final.name === selectedDirection)} onClick={() => setAtelierRoom("materials")}>04 <span>Materials</span></button>
               <button type="button" aria-current={atelierRoom === "stage" ? "step" : undefined} onClick={() => setAtelierRoom("stage")}>05 <span>The Stage</span></button>
-              <span className="seer-room-nav-note">Compose → Review → Select</span>
+              <span className="seer-room-nav-note">Brief → Salon → Compare → Materials → Stage</span>
             </nav>
             <div hidden={workspace !== "directions"} aria-busy={seerLoading} className="seer-atelier-body">
             <div hidden={atelierRoom !== "brief"}>
@@ -241,7 +241,11 @@ export function ChatInterface({ openRequest = 0, motionPaused = false, onDirecti
           <div hidden={atelierRoom !== "materials"}>
             {seerResults.find(item => item.final.name === selectedDirection) ? <MaterialsLibrary direction={seerResults.find(item => item.final.name === selectedDirection)!.final} /> :
               <p className="text-lg text-[#d6d0e9]">Select a generated direction from the Salon or Compare room to inspect its materials.</p>}
-            <button type="button" onClick={() => setAtelierRoom("salon")} className="seer-atelier-exit mt-6 min-h-12 rounded-full border px-5">← Back to the Salon</button>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button type="button" onClick={() => { setWorkspaceOpen(false); }} className="seer-atelier-select-button min-h-12 rounded-full px-6 font-semibold">View on Live Stage ↗</button>
+              <button type="button" onClick={() => setAtelierRoom("stage")} className="seer-atelier-exit min-h-12 rounded-full border px-5">Inspect sample compositions</button>
+              <button type="button" onClick={() => setAtelierRoom("salon")} className="seer-atelier-exit min-h-12 rounded-full border px-5">← Back to the Salon</button>
+            </div>
           </div>
           <div hidden={atelierRoom !== "stage"}>
             <AtelierStage direction={seerResults.find(item => item.final.name === selectedDirection)?.final ?? {name:"Atelier sample",direction:"Explore sample layouts, or choose a direction for a personalized proof.",rationale:"Preview before selection",palette:{background:"#080B14",text:"#F2EDFF",mutedText:"#C4C3D7",accent:"#BCAEFA",accentText:"#080B14",border:"#BCAEFA"}}} />
