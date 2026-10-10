@@ -310,7 +310,7 @@ export function MainContent({ user, project }: MainContentProps) {
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div>}
 
                           <div hidden={stageContent !== "generated"} className="mt-2.5 flex shrink-0 items-center justify-between px-1 font-mono text-sm uppercase tracking-[0.17em] text-white/80">
                             <span>{stageMode} lens</span>
