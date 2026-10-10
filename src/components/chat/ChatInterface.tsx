@@ -4,6 +4,7 @@ import { useStudioAutosave } from "@/lib/use-studio-autosave";
 import { useEffect, useRef, useState } from "react";
 import { Activity, Orbit, Sparkles, Shuffle } from "lucide-react";
 import { MessageList } from "./MessageList";
+import { ScreenStylePreview } from "./ScreenStylePreview";
 import { ColorSpiral } from "./ColorSpiral";
 import { DesignPortfolio } from "./DesignPortfolio";
 import { MessageInput } from "./MessageInput";
@@ -157,15 +158,11 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
           {seerError && <p role="alert" className="mt-2 text-base text-pink-100">{seerError}</p>}
           <p role="status" className="mt-3 text-base text-white/90">{saveMessage}</p>
           <DesignPortfolio onChoose={chooseDirection} />
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-6 2xl:grid-cols-2">
             {seerResults.map((result, index) => <article key={index} className="mt-3 rounded-3xl border border-white/30 bg-[linear-gradient(135deg,rgba(255,196,48,.14),rgba(255,91,157,.12),rgba(255,133,55,.14))] p-6 shadow-xl backdrop-blur-xl">
               <h3 className="text-lg font-semibold text-white">{index + 1}. {result.final.name}</h3>
               <p className="mt-2 text-base leading-6 text-white/90">{result.final.direction}</p>
-              <div className="mt-3 rounded-lg border-2 p-3" style={{ backgroundColor: result.final.palette.background, color: result.final.palette.text, borderColor: result.final.palette.border }}>
-                <p className="font-semibold">Your interface, clearly seen</p>
-                <p style={{ color: result.final.palette.mutedText }}>Readable supporting text</p>
-                <span className="mt-2 inline-block rounded-lg border-2 px-3 py-2" style={{ backgroundColor: result.final.palette.accent, color: result.final.palette.accentText, borderColor: result.final.palette.border }}>Example action</span>
-              </div>
+              <ScreenStylePreview direction={result.final} />
               <p className="mt-2 text-sm leading-6 text-white/90">{checkPalette(result.final.palette).map(check => `${check.pair}: ${check.ratio.toFixed(2)}:1`).join(" · ")}</p>
               {result.contrastCorrections?.length ? <p className="mt-2 text-sm text-lime-100">Contrast checks corrected {result.contrastCorrections.join(", ")} while preserving the chosen background and accent.</p> : null}
               <details className="mt-2 text-base leading-6 text-white/90"><summary className="min-h-11 cursor-pointer py-2">Idea, opinion & final choice</summary><p>OpenAI’s idea: {result.proposal.name}. {result.proposal.rationale}</p><p className="mt-2">Gemini’s opinion: {result.critique}</p><p className="mt-2">OpenAI’s final choice: {result.final.rationale}</p><p className="mt-2">These checks cover the solid palette pairs. The generated screen still needs a rendered accessibility review.</p></details>

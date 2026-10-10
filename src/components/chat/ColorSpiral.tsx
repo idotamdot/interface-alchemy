@@ -1,4 +1,5 @@
 "use client";
+import { ScreenStylePreview } from "./ScreenStylePreview";
 import { Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
 import { makePaletteCombinations } from "@/lib/palette-remix";
@@ -35,9 +36,7 @@ export function ColorSpiral({ result, onChoose, expanded = false, exploration, o
       <input type="range" min="0" max="4" step="1" value={position} onChange={event => setPosition(Number(event.target.value))} aria-valuetext={`${position + 1} of 5: ${current.harmony}, ${current.finish}`} className="h-11 w-full accent-lime-200" />
     </label>
     <p role="status" className="font-semibold">{position + 1}. {current.harmony} · {current.finish}</p>
-    <div className="relative my-6 min-h-64 rounded-2xl border-2 p-8 text-xl leading-9" style={{ backgroundColor: current.direction.palette.background, color: current.direction.palette.text, borderColor: current.direction.palette.border, boxShadow: current.finish === "Neon" ? `0 0 20px ${current.direction.palette.accent}80` : current.finish === "Soft glow" ? `0 0 35px ${current.direction.palette.accent}50` : current.finish === "Gold leaf" ? "0 0 0 4px #d7ab45, 0 0 18px #d7ab4530" : undefined }}>
-      {current.finish === "Sparkle" && <div className="mb-2 flex justify-end gap-2" aria-hidden="true"><Sparkles className="seer-sparkle h-5 w-5" style={{ color: current.direction.palette.text }} /><Sparkles className="seer-sparkle h-3 w-3" style={{ color: current.direction.palette.text }} /></div>}
-      <p className="font-semibold">A clear new color story</p><p style={{ color: current.direction.palette.mutedText }}>The same idea, a different palette.</p><span className="mt-2 inline-block rounded-lg px-3 py-2" style={{ backgroundColor: current.direction.palette.accent, color: current.direction.palette.accentText }}>Readable action</span></div>
+    <ScreenStylePreview direction={current.direction} finish={current.finish} />
     <div className="mb-3 flex flex-wrap gap-2">{current.accents.map((accent, index) => <span key={index} className="rounded-lg px-2 py-2 font-mono text-sm" style={{ backgroundColor: accent, color: foreground(accent) }}>{accent}</span>)}</div>
     <div className="flex flex-wrap gap-2"><button type="button" onClick={() => onChoose(remix)} className="min-h-11 rounded-full border border-lime-200/40 px-4 text-lime-100">Use this palette</button><button type="button" onClick={randomize} className="min-h-11 rounded-full border border-lime-200/40 px-4 text-lime-100">New combinations</button></div>
     <DesignPortfolio result={remix} onChoose={onChoose} />
