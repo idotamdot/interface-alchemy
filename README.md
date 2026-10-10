@@ -1,3 +1,9 @@
+## Unified visual identity — Velvet Green Atelier (October 2026)
+
+The Interface Alchemy shell, Screen Seer Studio, Salon, Compare, Materials, and Stage use a consistent near-black velvet green base, almost-clear iridescent glass surfaces, bright-white sans-serif typography, and restrained amber accents. Slowly drifting amber/teal atmospheric light sits **behind** the UI; motion respects the global pause toggle and reduced-motion preferences. The core tokens and shared component treatments live in `src/app/globals.css`.
+
+**Important:** This is the application chrome's design identity. A customer's generated sample/preview deliberately retains its independently generated palette. Do not globally recolor their chosen design or confuse stylistic samples with a working generated application.
+
 ## Screen Seer Studio — Professional Visual Atelier (October 2026)
 
 **Interface Alchemy owns the application's visual identity, independently of UX Designer Studio's wireframes.** The Screen Seer Studio is an art-direction workspace—not a substitute for designing product behavior.

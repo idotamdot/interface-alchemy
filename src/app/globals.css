@@ -591,3 +591,93 @@ button.seer-home-card:hover { background: linear-gradient(140deg, rgba(var(--gla
 .seer-stage-canvas{overflow-x:auto;border-radius:1.6rem;border:1px solid rgba(207,196,248,.22);padding:clamp(.75rem,3vw,2rem);background:radial-gradient(circle at 50% 0,rgba(162,133,255,.14),transparent 55%),#090c17}
 .seer-stage-viewport{margin-inline:auto;width:100%;transition:max-width 200ms ease}
 @media(prefers-reduced-motion:reduce){.seer-stage-viewport{transition:none}}
+
+/* Interface Alchemy 2026: Velvet Green / Iridescent Amber.
+   One coherent shell; generated user designs retain their own palettes. */
+:root {
+ --ia-velvet:#07110d;--ia-forest:#0b1713;--ia-deep:#10201a;
+ --ia-white:#ffffff;--ia-soft:rgba(255,255,255,.83);
+ --ia-amber:#ffb347;--ia-gold:#f6c56f;
+ --ia-line:rgba(218,255,239,.18);
+ --ia-glass:linear-gradient(138deg,rgba(255,255,255,.075),rgba(255,255,255,.015) 55%),rgba(7,18,13,.45);
+ --ia-font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+body {background:var(--ia-velvet);color:#fff;font-family:var(--ia-font);}
+.alchemy-atmosphere {
+ background:radial-gradient(ellipse at 18% 14%,rgba(255,179,71,.13),transparent 38%),
+ radial-gradient(ellipse at 84% 70%,rgba(153,246,220,.09),transparent 45%),
+ linear-gradient(145deg,#040b08,#07140e 52%,#0b1b14) !important;
+ color:#fff;font-family:var(--ia-font);
+}
+.alchemy-atmosphere .alchemy-orb {opacity:.34;filter:blur(85px) hue-rotate(72deg);animation:ia-float 36s ease-in-out infinite alternate;pointer-events:none;}
+.alchemy-atmosphere .alchemy-orb:nth-of-type(2){animation-duration:43s}
+.alchemy-atmosphere .alchemy-grid,.alchemy-atmosphere .alchemy-stardust{opacity:.17!important}
+.alchemy-atmosphere .alchemy-veil{opacity:.26}
+@keyframes ia-float{0%{transform:translate3d(-12px,10px,0) scale(.97)}50%{transform:translate3d(18px,-15px,0) scale(1.04)}100%{transform:translate3d(-9px,16px,0) scale(.99)}}
+.alchemy-shell-bar,.alchemy-panel,.alchemy-stage-surface,.alchemy-stage-frame,.seer-home,.seer-atelier-body,
+.seer-atelier-result,.seer-material-card,.seer-atelier-portfolio-card,.seer-stage-canvas {
+ background:var(--ia-glass)!important;
+ border:1px solid var(--ia-line)!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.12),0 22px 60px rgba(0,0,0,.24)!important;
+ backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+.alchemy-shell-bar,.alchemy-panel,.seer-home,.seer-atelier-body{border-radius:24px}
+.seer-atelier,.seer-atelier-home {
+ background:radial-gradient(ellipse at 75% 9%,rgba(251,167,65,.12),transparent 35%),
+ radial-gradient(ellipse at 16% 78%,rgba(155,246,215,.09),transparent 40%),
+ linear-gradient(140deg,#05100b,#0b1c14 65%,#050e0a)!important;
+ color:#fff!important;
+}
+.seer-atelier {font-family:var(--ia-font);}
+.seer-atelier-title,.seer-atelier-home-heading,.seer-atelier-intro h3,
+.seer-atelier-home-heading em,.seer-atelier .font-serif {
+ font-family:var(--ia-font)!important;color:#fff!important;background:none!important;font-style:normal!important;
+ letter-spacing:-.055em;font-weight:650;
+}
+.seer-atelier-title{font-size:clamp(2.8rem,6vw,6.3rem)}
+.seer-atelier-home-heading{font-size:clamp(3rem,6vw,6.5rem)}
+.seer-atelier-eyebrow,.alchemy-kicker,.seer-atelier-field-label {color:#ffe0a9!important}
+.seer-atelier-subtitle,.seer-atelier-intro p,.seer-atelier-steps,
+.seer-atelier-home p,.seer-atelier-body p,.seer-room-nav-note {color:var(--ia-soft)!important}
+.seer-atelier-home-grid .seer-home-card {
+ background:var(--ia-glass)!important;border:1px solid rgba(205,255,233,.22)!important;
+ color:#fff!important;backdrop-filter:blur(18px);box-shadow:inset 0 1px rgba(255,255,255,.14),0 15px 40px rgba(0,0,0,.26)!important;
+}
+.seer-atelier-home-grid .seer-home-card svg,.seer-atelier-home-grid .seer-home-card > span:last-child{color:#ffce83!important}
+.seer-atelier-home-grid button.seer-home-card:hover{transform:translateY(-3px);border-color:rgba(255,204,137,.5)!important;}
+.seer-atelier-home .seer-amber-glow {opacity:.45;filter:none}
+.seer-atelier-home .seer-lime-trace {opacity:.15;filter:hue-rotate(105deg)}
+.seer-atelier-textarea,.seer-atelier-select,.seer-atelier select,.seer-atelier input,.seer-atelier textarea {
+ background-color:#0b2017!important;color:#fff!important;border-color:rgba(214,255,233,.27)!important;
+ font-family:var(--ia-font);
+}
+.seer-atelier textarea::placeholder,.seer-atelier input::placeholder{color:rgba(255,255,255,.55)}
+.seer-atelier select option{background:#0b2017;color:#fff}
+.seer-atelier-create,.seer-atelier-select-button {
+ background:linear-gradient(115deg,#ffcb7b,#f2b55c)!important;color:#092015!important;
+ border:1px solid rgba(255,240,199,.45);box-shadow:0 9px 30px rgba(255,179,71,.16)!important;
+}
+.seer-atelier-exit,.seer-stage-toggle,.seer-room-nav button,.seer-nav-button {
+ background:rgba(225,255,239,.045)!important;
+ color:#fff!important;border-color:rgba(211,255,230,.23)!important;
+ backdrop-filter:blur(13px);font-family:var(--ia-font)!important;
+}
+.seer-stage-toggle[aria-pressed=true],.seer-room-nav button[aria-current=step] {
+ background:linear-gradient(120deg,rgba(255,179,71,.26),rgba(145,255,224,.13))!important;
+ border-color:rgba(255,201,121,.7)!important;color:#fff!important;
+ box-shadow:0 0 22px rgba(255,179,71,.12);
+}
+.seer-material-card,.seer-atelier-result,.seer-atelier-portfolio-card{background:var(--ia-glass)!important}
+.seer-atelier-header{border-bottom-color:rgba(211,255,229,.18)!important}
+.seer-atelier button:focus-visible,.seer-atelier textarea:focus-visible,.seer-atelier select:focus-visible,
+.alchemy-atmosphere button:focus-visible,.alchemy-atmosphere a:focus-visible {
+ outline:2px solid #ffd08a!important;outline-offset:3px;
+}
+.alchemy-atmosphere button:not(:disabled),.seer-atelier button:not(:disabled) {transition:background .24s,border-color .24s,transform .24s}
+.alchemy-atmosphere [class*="bg-[#241109]"],.alchemy-atmosphere [class*="bg-[#2c160d]"] {background-color:#0b1a13!important}
+.alchemy-atmosphere [class*="text-orange-"],.alchemy-atmosphere [class*="text-amber-"]{color:#ffe0ae}
+[data-motion=paused] .alchemy-orb {animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){
+ .alchemy-atmosphere .alchemy-orb{animation:none!important}
+ .seer-atelier button,.alchemy-atmosphere button {transition:none!important}
+}

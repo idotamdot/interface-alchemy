@@ -99,7 +99,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false, onDirecti
   }, [messages]);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[radial-gradient(circle_at_20%_0%,rgba(255,196,48,0.12),transparent_36%)]">
+    <div className="flex h-full flex-col overflow-hidden bg-[radial-gradient(circle_at_20%_0%,rgba(255,179,71,0.12),transparent_36%)]">
       <div className="flex items-center justify-between border-b border-white/8 px-5 py-3">
         <div>
           <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.28em] text-white/80">
@@ -178,7 +178,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false, onDirecti
               </select>
             </label>
             <label className="text-sm text-white/90">Designs to compare
-              <select aria-label="Number of directions" value={seerCount} onChange={event => setSeerCount(Number(event.target.value))} disabled={seerLoading || isSynthesizing} className="ml-2 min-h-11 rounded-lg bg-[#241109] px-2 text-white">
+              <select aria-label="Number of directions" value={seerCount} onChange={event => setSeerCount(Number(event.target.value))} disabled={seerLoading || isSynthesizing} className="ml-2 min-h-11 rounded-lg bg-[#0b1a13] px-2 text-white">
                 {[1, 2, 3].map(count => <option key={count} value={count}>{count}</option>)}
               </select>
             </label>

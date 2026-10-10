@@ -95,9 +95,9 @@ export function MainContent({ user, project }: MainContentProps) {
           <div className="alchemy-grid pointer-events-none absolute inset-0 opacity-70" />
           <div className="alchemy-stardust pointer-events-none absolute inset-0" />
           <div className="alchemy-veil pointer-events-none absolute inset-0" />
-          <div className="alchemy-orb absolute -left-40 -top-20 h-[30rem] w-[30rem] bg-amber-600/[0.30]" />
-          <div className="alchemy-orb absolute -right-48 top-[12%] h-[34rem] w-[34rem] bg-orange-300/[0.20] [animation-delay:1.5s]" />
-          <div className="alchemy-orb absolute bottom-[-13rem] left-[40%] h-[28rem] w-[28rem] bg-pink-500/[0.18] [animation-delay:3s]" />
+          <div className="alchemy-orb absolute -left-40 -top-20 h-[30rem] w-[30rem] bg-emerald-300/[0.20]" />
+          <div className="alchemy-orb absolute -right-48 top-[12%] h-[34rem] w-[34rem] bg-amber-300/[0.20] [animation-delay:1.5s]" />
+          <div className="alchemy-orb absolute bottom-[-13rem] left-[40%] h-[28rem] w-[28rem] bg-teal-300/[0.16] [animation-delay:3s]" />
 
           <div className="relative z-10 flex h-full flex-col p-2.5 sm:p-4">
             <header className="alchemy-shell-bar mb-2.5 flex shrink-0 flex-wrap min-h-[4.35rem] items-center justify-between gap-3 rounded-[1.4rem] px-3.5 py-3 sm:mb-3.5 sm:px-5">
@@ -146,7 +146,7 @@ export function MainContent({ user, project }: MainContentProps) {
               <button aria-label="Studio settings" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(value => !value)} className="seer-nav-button"><Settings aria-hidden="true" /></button>
               <button aria-label="Continue to studio canvas" disabled={!homeOpen} onClick={() => setHomeOpen(false)} className="seer-nav-button"><ArrowRight aria-hidden="true" /></button>
             </nav>
-            {settingsOpen && <section aria-label="Studio settings and profile" className="mb-4 rounded-2xl border border-white/30 bg-[#241109] p-5 text-lg"><p>{user ? user.email : "You can create, review and save to the studio testing portfolio without signing in."}</p><p>Use Pause motion above for a still background. Your device’s reduced-motion preference is also respected.</p><button onClick={() => setSettingsOpen(false)} className="mt-3 min-h-12 rounded-full border border-white/40 px-5">Close settings</button></section>}
+            {settingsOpen && <section aria-label="Studio settings and profile" className="mb-4 rounded-2xl border border-white/30 bg-[#0b1a13] p-5 text-lg"><p>{user ? user.email : "You can create, review and save to the studio testing portfolio without signing in."}</p><p>Use Pause motion above for a still background. Your device’s reduced-motion preference is also respected.</p><button onClick={() => setSettingsOpen(false)} className="mt-3 min-h-12 rounded-full border border-white/40 px-5">Close settings</button></section>}
             <section hidden={!homeOpen} aria-label="Studio home" className="seer-home seer-atelier-home relative min-h-0 flex-1 overflow-y-auto rounded-3xl p-5 sm:p-10">
               <div className="seer-amber-glow" aria-hidden="true" />
               <svg className="seer-lime-trace" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
@@ -336,7 +336,7 @@ export function MainContent({ user, project }: MainContentProps) {
                           <ResizableHandle className="w-px bg-white/[0.07] hover:bg-amber-300/50" />
 
                           <ResizablePanel defaultSize={72}>
-                            <div className="h-full bg-[#2c160d]">
+                            <div className="h-full bg-[#0b1a13]">
                               <CodeEditor />
                             </div>
                           </ResizablePanel>
