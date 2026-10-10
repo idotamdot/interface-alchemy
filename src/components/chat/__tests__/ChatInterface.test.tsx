@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { ChatInterface } from "../ChatInterface";
 import { useChat } from "@/lib/contexts/chat-context";
 import type { Message } from "ai";
@@ -51,6 +51,7 @@ const mockedUseChat = vi.mocked(useChat);
 const baseChatState: ReturnType<typeof useChat> = {
   messages: [],
   input: "",
+  setInput: vi.fn(),
   handleInputChange: vi.fn(),
   handleSubmit: vi.fn(),
   status: "idle",
@@ -139,4 +140,30 @@ test("uses the Chromatic Void container and preserves scroll behavior", () => {
   rerender(<ChatInterface />);
 
   expect(screen.getByTestId("message-list").textContent).toContain("1 messages");
+});
+
+
+test("the Seer preserves the brief, rerolls without stacking directions, and waits for submission", () => {
+  vi.spyOn(Math, "random").mockReturnValue(0);
+  const setInput = vi.fn();
+  const state = { ...baseChatState, input: "A multilingual neighborhood shop", setInput };
+  mockedUseChat.mockReturnValue(state);
+  const view = render(<ChatInterface />);
+  fireEvent.click(screen.getByRole("button", { name: "Let the Seer choose" }));
+  const first = setInput.mock.calls[0][0];
+  expect(first).toContain(state.input);
+  expect(first).toContain("Sunlit editorial");
+  expect(baseChatState.append).not.toHaveBeenCalled();
+  expect(baseChatState.handleSubmit).not.toHaveBeenCalled();
+  mockedUseChat.mockReturnValue({ ...state, input: first });
+  view.rerender(<ChatInterface />);
+  fireEvent.click(screen.getByRole("button", { name: "Let the Seer choose" }));
+  const second = setInput.mock.calls[1][0];
+  expect(second).toContain(state.input);
+  expect(second).toContain("Playful garden");
+  expect(second).not.toContain("Sunlit editorial");
+  mockedUseChat.mockReturnValue({ ...state, status: "streaming" });
+  view.rerender(<ChatInterface />);
+  expect(screen.getByRole("button", { name: "Let the Seer choose" }).hasAttribute("disabled")).toBe(true);
+  vi.restoreAllMocks();
 });
