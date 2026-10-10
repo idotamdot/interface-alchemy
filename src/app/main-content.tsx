@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+  ArrowLeft, ArrowRight, Home, Settings, UserRound,
   Accessibility,
   Braces,
   Code2,
@@ -69,6 +70,9 @@ const stageModes: Array<{
 ];
 
 export function MainContent({ user, project }: MainContentProps) {
+  const [homeOpen, setHomeOpen] = useState(!project);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [designRequest, setDesignRequest] = useState(0);
   const [activeView, setActiveView] = useState<WorkspaceView>("preview");
   const [stageMode, setStageMode] = useState<StageMode>("live");
   const [viewport, setViewport] = useState<Viewport>("desktop");
@@ -127,11 +131,34 @@ export function MainContent({ user, project }: MainContentProps) {
               </div>
             </header>
 
-            <div className="mb-2.5 grid shrink-0 grid-cols-2 gap-2 lg:hidden" role="group" aria-label="Studio workspace">
+            <nav aria-label="Studio navigation" className="mb-4 flex shrink-0 items-center justify-center gap-3">
+              <button aria-label="Back to studio home" disabled={homeOpen} onClick={() => setHomeOpen(true)} className="seer-nav-button"><ArrowLeft aria-hidden="true" /></button>
+              <button aria-label="Profile" onClick={() => setSettingsOpen(value => !value)} className="seer-nav-button"><UserRound aria-hidden="true" /></button>
+              <button aria-label="Studio home" onClick={() => setHomeOpen(true)} className="seer-nav-button"><Home aria-hidden="true" /></button>
+              <button aria-label="Studio settings" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(value => !value)} className="seer-nav-button"><Settings aria-hidden="true" /></button>
+              <button aria-label="Continue to studio canvas" disabled={!homeOpen} onClick={() => setHomeOpen(false)} className="seer-nav-button"><ArrowRight aria-hidden="true" /></button>
+            </nav>
+            {settingsOpen && <section aria-label="Studio settings and profile" className="mb-4 rounded-2xl border border-white/30 bg-[#241109] p-5 text-lg"><p>{user ? user.email : "You can create and review without signing in. Private portfolio saving requires sign-in."}</p><p>Use Pause motion above for a still background. Your device’s reduced-motion preference is also respected.</p><button onClick={() => setSettingsOpen(false)} className="mt-3 min-h-12 rounded-full border border-white/40 px-5">Close settings</button></section>}
+            <section hidden={!homeOpen} aria-label="Studio home" className="seer-home relative min-h-0 flex-1 overflow-y-auto rounded-3xl p-5 sm:p-10">
+              <div className="seer-amber-glow" aria-hidden="true" />
+              <div className="relative mx-auto max-w-6xl">
+                <p className="text-lg text-[#ffe4b2]">Your imagination, made visible</p>
+                <h2 className="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-6xl">What would you like<br />to explore?</h2>
+                <p className="mt-5 max-w-2xl text-lg leading-8 text-white/90">Choose a room. Take all the space you need to create.</p>
+                <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  <button className="seer-home-card seer-yellow" onClick={() => { setHomeOpen(false); setDesignRequest(value => value + 1); }}><Sparkles aria-hidden="true" /><span className="text-3xl font-semibold">Design directions</span><span>Describe your idea or let the Seer choose.</span><span className="mt-auto font-semibold">Explore →</span></button>
+                  <button className="seer-home-card seer-lime" onClick={() => { setHomeOpen(false); setDesignRequest(value => value + 1); }}><ScanSearch aria-hidden="true" /><span className="text-3xl font-semibold">Color spiral</span><span>Choose a direction, then explore harmonious palettes and finishes.</span><span className="mt-auto font-semibold">Start with a direction →</span></button>
+                  <button className="seer-home-card seer-clear" onClick={() => { setHomeOpen(false); setMobilePanel("stage"); setActiveView("preview"); }}><Eye aria-hidden="true" /><span className="text-3xl font-semibold">Studio canvas</span><span>Review the live interface and its code.</span><span className="mt-auto font-semibold">Open canvas →</span></button>
+                  <div className="seer-home-card seer-pink"><WandSparkles aria-hidden="true" /><span className="text-3xl font-semibold">Branding & artwork</span><span>Artwork and icons shaped by your description.</span><span className="mt-auto font-semibold">Coming next</span></div>
+                  <div className="seer-home-card seer-orange"><Move3d aria-hidden="true" /><span className="text-3xl font-semibold">Motion & transitions</span><span>Give your screens a rhythm of their own.</span><span className="mt-auto font-semibold">Coming next</span></div>
+                </div>
+              </div>
+            </section>
+            <div hidden={homeOpen} className="mb-2.5 grid shrink-0 grid-cols-2 gap-2 lg:hidden" role="group" aria-label="Studio workspace">
               <button type="button" aria-pressed={mobilePanel === "compose"} onClick={() => setMobilePanel("compose")} className="min-h-11 rounded-xl border border-white/15 bg-white/5 px-3 text-sm aria-pressed:bg-amber-500/25 focus-visible:outline-2 focus-visible:outline-orange-200">Compose</button>
               <button type="button" aria-pressed={mobilePanel === "stage"} onClick={() => setMobilePanel("stage")} className="min-h-11 rounded-xl border border-white/15 bg-white/5 px-3 text-sm aria-pressed:bg-orange-500/20 focus-visible:outline-2 focus-visible:outline-orange-200">Stage &amp; code</button>
             </div>
-            <section className="min-h-0 min-w-0 flex-1">
+            <section hidden={homeOpen} className="min-h-0 min-w-0 flex-1">
               <ResizablePanelGroup direction="horizontal" className="alchemy-workspace-group h-full gap-2.5 sm:gap-3.5">
                 <ResizablePanel className="alchemy-workspace-panel" data-mobile-active={mobilePanel === "compose"} defaultSize={35} minSize={27} maxSize={48}>
                   <section className="alchemy-panel relative flex h-full flex-col overflow-hidden rounded-[1.45rem]">
@@ -141,7 +168,7 @@ export function MainContent({ user, project }: MainContentProps) {
                       composition chamber
                     </div>
                     <div className="min-h-0 flex-1 pt-8">
-                      <ChatInterface />
+                      <ChatInterface openRequest={designRequest} motionPaused={motionPaused} />
                     </div>
                   </section>
                 </ResizablePanel>

@@ -12,10 +12,11 @@ import { z } from "zod";
 import { checkPalette, directionPrompt, seerResultSchema, type SeerResult } from "@/lib/seer-contract";
 import { useChat } from "@/lib/contexts/chat-context";
 
-export function ChatInterface() {
+export function ChatInterface({ openRequest = 0, motionPaused = false }: { openRequest?: number; motionPaused?: boolean }) {
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [workspace, setWorkspace] = useState<"directions" | number>("directions");
   const [explorations, setExplorations] = useState<Record<number, { seed: number; position: number }>>({});
+  useEffect(() => { if (openRequest > 0) { setWorkspace("directions"); setWorkspaceOpen(true); } }, [openRequest]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { messages, input, setInput, handleInputChange, handleSubmit, status, append } =
     useChat();
@@ -125,7 +126,7 @@ export function ChatInterface() {
       <div className="flex-shrink-0">
         <Dialog open={workspaceOpen} onOpenChange={setWorkspaceOpen}>
           <DialogTrigger asChild><button type="button" onClick={() => setWorkspace("directions")} className="m-4 min-h-12 rounded-full border border-lime-200/40 bg-lime-200/10 px-5 text-lg text-lime-100">Open design workspace</button></DialogTrigger>
-          <DialogContent showCloseButton={false} className="inset-0 top-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-y-auto rounded-none border-0 bg-[#241109] p-5 text-white sm:max-w-none sm:p-10">
+          <DialogContent data-motion={motionPaused ? "paused" : "playing"} showCloseButton={false} className="inset-0 top-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-y-auto rounded-none border-0 bg-[#241109] p-5 text-white sm:max-w-none sm:p-10">
             <header className="mx-auto mb-8 flex w-full max-w-6xl flex-wrap items-center justify-between gap-4">
               <div><DialogTitle className="text-3xl sm:text-5xl">{workspace === "directions" ? "Find your design direction" : "Explore your color story"}</DialogTitle><DialogDescription className="mt-3 text-lg text-white/90">Take your time. Your draft and design directions stay intact when you return to the studio.</DialogDescription></div>
               <DialogClose className="min-h-12 rounded-full border border-white/40 px-5 text-lg">Back to studio</DialogClose>
