@@ -19,3 +19,13 @@ test("does not publish a final choice when critique fails", async () => {
   await expect(deliberateDirection("shop", new AbortController().signal, call)).rejects.toThrow();
   expect(call).toHaveBeenCalledTimes(2);
 });
+
+test("corrects weak text pairs while preserving the final AI background and accent", async () => {
+  const weak = { ...direction, palette: { ...direction.palette, text: "#eeeeee", mutedText: "#dddddd", accentText: "#ffffaa" } };
+  const call = vi.fn().mockResolvedValueOnce(JSON.stringify(direction)).mockResolvedValueOnce("Improve contrast").mockResolvedValueOnce(JSON.stringify(weak));
+  const result = await deliberateDirection("shop", new AbortController().signal, call);
+  expect(result.final.palette.background).toBe(weak.palette.background);
+  expect(result.final.palette.accent).toBe(weak.palette.accent);
+  expect(result.contrastCorrections).toEqual(["text", "mutedText", "accentText"]);
+  expect(seerResultSchema.safeParse(result).success).toBe(true);
+});

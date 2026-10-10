@@ -22,7 +22,16 @@ export function checkPalette(p: SeerDirection["palette"]) {
     { pair: "Control borders", ratio: contrastRatio(p.border, p.background), minimum: 3 },
   ];
 }
-export const seerResultSchema = z.object({ proposal: directionSchema, critique: text, final: directionSchema }).superRefine((result, ctx) => {
+export function enforcePaletteContrast(direction: SeerDirection) {
+  const palette = { ...direction.palette };
+  const corrections: string[] = [];
+  const strongest = (background: string) => contrastRatio("#000000", background) >= contrastRatio("#ffffff", background) ? "#000000" : "#ffffff";
+  for (const [key, background, minimum] of [["text", palette.background, 4.5], ["mutedText", palette.background, 4.5], ["accentText", palette.accent, 4.5], ["border", palette.background, 3]] as const) {
+    if (contrastRatio(palette[key], background) < minimum) { palette[key] = strongest(background); corrections.push(key); }
+  }
+  return { direction: { ...direction, palette }, corrections };
+}
+export const seerResultSchema = z.object({ proposal: directionSchema, critique: text, final: directionSchema, contrastCorrections: z.array(z.string()).max(4).optional() }).superRefine((result, ctx) => {
   for (const check of checkPalette(result.final.palette)) if (check.ratio < check.minimum) ctx.addIssue({ code: "custom", message: `${check.pair} needs ${check.minimum}:1 contrast` });
 });
 export type SeerResult = z.infer<typeof seerResultSchema>;
