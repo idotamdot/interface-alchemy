@@ -7,6 +7,7 @@ import { MessageList } from "./MessageList";
 import { ScreenStylePreview } from "./ScreenStylePreview";
 import { MaterialsLibrary } from "./MaterialsLibrary";
 import { AtelierStage } from "./AtelierStage";
+import { createVisualStylePackage } from "@/lib/visual-style-package";
 import { ColorSpiral } from "./ColorSpiral";
 import { DesignPortfolio } from "./DesignPortfolio";
 import { MessageInput } from "./MessageInput";
@@ -36,6 +37,7 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
   const [seerCount, setSeerCount] = useState(3);
   const [seerSource, setSeerSource] = useState("description");
   const [selectedDirection, setSelectedDirection] = useState("");
+  const [handoffStatus,setHandoffStatus] = useState("");
   const saveMessage = useStudioAutosave("design-directions", {styleBrief,seerResults,seerCount,seerSource,selectedDirection,explorations}, value => {if(value.styleBrief !== undefined){briefSeeded.current=true;setStyleBrief(value.styleBrief);}setSeerResults(value.seerResults);setSeerCount(value.seerCount);setSeerSource(value.seerSource);setSelectedDirection(value.selectedDirection);setExplorations(value.explorations);});
   useEffect(() => { if (!briefSeeded.current && input && /^(Workspace restored|Saved to)/.test(saveMessage)) { briefSeeded.current = true; setStyleBrief(input.split("\n\nVisual direction:")[0]); } }, [input, saveMessage]);
   const seerRequest = useRef<AbortController | null>(null);
@@ -67,6 +69,17 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
     setSelectedDirection(result.final.name);
     setInput(output);
     setAtelierRoom("materials");
+  };
+
+  const exportVisualStyle = () => {
+    const chosen=seerResults.find(item=>item.final.name===selectedDirection);
+    if(!chosen){setHandoffStatus("Select a direction before exporting.");return;}
+    try{
+      const pkg=createVisualStylePackage(chosen.final);
+      const url=URL.createObjectURL(new Blob([JSON.stringify(pkg,null,2)],{type:"application/json"}));
+      const link=document.createElement("a");link.href=url;link.download="screen-seer-visual-style.json";link.click();URL.revokeObjectURL(url);
+      setHandoffStatus("Visual-style package prepared for Website Builder. Downloading does not publish or apply it.");
+    }catch{setHandoffStatus("This direction could not pass the export checks. Your work remains intact.");}
   };
 
   const isSubmitted = status === "submitted";
@@ -234,6 +247,12 @@ export function ChatInterface({ openRequest = 0, motionPaused = false }: { openR
               <p>Choose a direction in the Salon before entering the Stage.</p>}
             <button type="button" onClick={() => setAtelierRoom("materials")} className="seer-atelier-exit mt-6 min-h-12 rounded-full border px-5">← Materials Library</button>
           </div>
+          <section className="mt-5 rounded-2xl border border-white/20 bg-white/5 p-5" aria-label="Website Builder handoff">
+            <h3 className="text-xl font-semibold">Prepare for Website Builder</h3>
+            <p className="mt-2 text-sm leading-6 text-[#d4cfe6]">Export the selected visual direction separately from UX Designer Studio's accepted wireframes. This is a style proposal, not an implemented website.</p>
+            <button type="button" disabled={!seerResults.some(item=>item.final.name===selectedDirection)} onClick={exportVisualStyle} className="seer-atelier-select-button mt-4 min-h-12 rounded-full px-6 font-semibold disabled:opacity-50">Download visual style package</button>
+            <p role="status" className="mt-3 text-sm">{handoffStatus}</p>
+          </section>
             </div>
             {seerResults.map((result, index) => <div key={index} hidden={workspace !== index}><ColorSpiral expanded exploration={explorations[index]} onExplore={value => setExplorations(current => ({ ...current, [index]: value }))} result={result} onChoose={chooseDirection} /></div>)}
             </div>
